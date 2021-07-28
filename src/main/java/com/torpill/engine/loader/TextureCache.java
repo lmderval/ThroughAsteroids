@@ -26,4 +26,10 @@ public class TextureCache {
         }
         return texture;
     }
+
+    public void cleanup() {
+        textures_map.forEach((path, texture) -> {
+            texture.cleanup();
+        });
+    }
 }

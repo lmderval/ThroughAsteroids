@@ -5,6 +5,7 @@ import com.torpill.engine.IGameLogic;
 import com.torpill.engine.MouseInput;
 import com.torpill.engine.Window;
 import com.torpill.engine.graphics.*;
+import com.torpill.engine.loader.StaticMeshesLoader;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
 import org.joml.Vector3i;
@@ -14,8 +15,8 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class ThroughAsteroids implements IGameLogic {
 
-    private static final float CAMERA_POS_STEP = 0.05f;
-    private static final float MOUSE_SENSITIVITY = 0.6f;
+    private static final float CAMERA_POS_STEP = 0.4f;
+    private static final float MOUSE_SENSITIVITY = 0.2f;
 
     private final Renderer renderer = new Renderer();
 
@@ -135,8 +136,9 @@ public class ThroughAsteroids implements IGameLogic {
         );
         material.setTexture(texture);
 
-        Mesh mesh = new Mesh(vertices, textures, new float[] {}, indices);
-        mesh.setMaterial(material);
+//        Mesh mesh = new Mesh(vertices, textures, new float[] {}, indices);
+//        mesh.setMaterial(material);
+        Mesh mesh =  StaticMeshesLoader.load("models/house/house.obj", "models/house")[0];
         meshes = new Mesh[]{
                 mesh
         };
