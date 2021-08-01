@@ -1,4 +1,4 @@
-package com.torpill.engine;
+package com.torpill.engine.world;
 
 import com.torpill.engine.graphics.Mesh;
 import com.torpill.engine.graphics.Transformation;

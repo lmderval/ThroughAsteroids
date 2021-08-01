@@ -5,6 +5,7 @@ import com.torpill.engine.graphics.Material;
 import com.torpill.engine.graphics.Mesh;
 import com.torpill.engine.graphics.Texture;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector4f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
@@ -17,11 +18,11 @@ import static org.lwjgl.assimp.Assimp.*;
 
 public class StaticMeshesLoader {
 
-    public static Mesh[] load(@NotNull String resource_path, @NotNull String textures_dir) throws Exception {
+    public static Mesh[] load(@NotNull String resource_path, @Nullable String textures_dir) throws Exception {
         return load(resource_path, textures_dir, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_FixInfacingNormals);
     }
 
-    public static Mesh[] load(@NotNull String resource_path, @NotNull String textures_dir, int flags) throws Exception {
+    public static Mesh[] load(@NotNull String resource_path, @Nullable String textures_dir, int flags) throws Exception {
         AIScene aiScene = aiImportFile(resource_path, flags);
         if (aiScene == null) {
             throw new Exception("Error loading model");
@@ -50,16 +51,16 @@ public class StaticMeshesLoader {
         return meshes;
     }
 
-    private static void processMaterial(AIMaterial aiMaterial, List<Material> materials, String textures_dir) throws Exception {
+    private static void processMaterial(@NotNull AIMaterial aiMaterial, @NotNull List<Material> materials, @Nullable String textures_dir) throws Exception {
         AIColor4D color = AIColor4D.create();
 
         AIString path = AIString.calloc();
         Assimp.aiGetMaterialTexture(aiMaterial, aiTextureType_DIFFUSE, 0, path, (IntBuffer) null, null, null, null, null, null);
-        String text_path = path.dataString();
+        String tex_path = path.dataString();
         Texture texture = null;
-        if (text_path.length() > 0) {
-            TextureCache textCache = TextureCache.getInstance();
-            texture = textCache.getTexture(textures_dir + "/" + text_path);
+        if (textures_dir != null && tex_path.length() > 0) {
+            TextureCache tex_cache = TextureCache.getInstance();
+            texture = tex_cache.getTexture(textures_dir + "/" + tex_path);
         }
 
         Vector4f ambient = Material.DEFAULT_COLOR;
@@ -80,12 +81,18 @@ public class StaticMeshesLoader {
             specular = new Vector4f(color.r(), color.g(), color.b(), color.a());
         }
 
-        Material material = new Material(ambient, diffuse, specular, 1.0f);
+        Vector4f emissive = Material.DEFAULT_COLOR;
+        result = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_EMISSIVE, aiTextureType_NONE, 0, color);
+        if (result == 0) {
+            emissive = new Vector4f(color.r(), color.g(), color.b(), color.a());
+        }
+
+        Material material = new Material(ambient, diffuse, specular, emissive, 1f, 0f);
         material.setTexture(texture);
         materials.add(material);
     }
 
-    private static Mesh processMesh(AIMesh aiMesh, List<Material> materials) {
+    private static Mesh processMesh(@NotNull AIMesh aiMesh, @NotNull List<Material> materials) {
         List<Float> vertices = new ArrayList<>();
         List<Float> textures = new ArrayList<>();
         List<Float> normals = new ArrayList<>();
@@ -114,7 +121,7 @@ public class StaticMeshesLoader {
         return mesh;
     }
 
-    private static void processVertices(AIMesh aiMesh, List<Float> vertices) {
+    private static void processVertices(@NotNull AIMesh aiMesh, @NotNull List<Float> vertices) {
         AIVector3D.Buffer aiVertices = aiMesh.mVertices();
         while (aiVertices.remaining() > 0) {
             AIVector3D aiVertex = aiVertices.get();
@@ -124,7 +131,7 @@ public class StaticMeshesLoader {
         }
     }
 
-    private static void processTexCoords(AIMesh aiMesh, List<Float> textures) {
+    private static void processTexCoords(@NotNull AIMesh aiMesh, @NotNull List<Float> textures) {
         AIVector3D.Buffer aiTexCoords = aiMesh.mTextureCoords(0);
         int num_tex_coords = aiTexCoords != null ? aiTexCoords.remaining() : 0;
         for (int i = 0; i < num_tex_coords; i++) {
@@ -134,7 +141,7 @@ public class StaticMeshesLoader {
         }
     }
 
-    private static void processNormals(AIMesh aiMesh, List<Float> normals) {
+    private static void processNormals(@NotNull AIMesh aiMesh, @NotNull List<Float> normals) {
         AIVector3D.Buffer aiNormals = aiMesh.mNormals();
         while (aiNormals != null && aiNormals.remaining() > 0) {
             AIVector3D aiNormal = aiNormals.get();
@@ -144,7 +151,7 @@ public class StaticMeshesLoader {
         }
     }
 
-    private static void processIndices(AIMesh aiMesh, List<Integer> indices) {
+    private static void processIndices(@NotNull AIMesh aiMesh, @NotNull List<Integer> indices) {
         int num_faces = aiMesh.mNumFaces();
         AIFace.Buffer aiFaces = aiMesh.mFaces();
         for (int i = 0; i < num_faces; i++) {

@@ -3,6 +3,8 @@ package com.torpill.engine.graphics;
 import com.torpill.engine.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
@@ -93,7 +95,7 @@ public class ShaderProgram {
         glUseProgram(0);
     }
 
-    public void createUniform(String uniform) throws Exception {
+    public void createUniform(@NotNull String uniform) throws Exception {
         int loc = glGetUniformLocation(program, uniform);
         if (loc < 0) {
             throw new Exception("Couldn't find uniform " + uniform);
@@ -101,16 +103,79 @@ public class ShaderProgram {
         uniforms.put(uniform, loc);
     }
 
-    public void setUniform(String uniform, Matrix4f mat) {
+    public void createPointLightUniform(@NotNull String uniform) throws Exception {
+        createUniform(uniform + ".color");
+        createUniform(uniform + ".position");
+        createUniform(uniform + ".intensity");
+        createUniform(uniform + ".att.constant");
+        createUniform(uniform + ".att.linear");
+        createUniform(uniform + ".att.exponent");
+    }
+
+    public void createDirectionalLightUniform(@NotNull String uniform) throws Exception {
+        createUniform(uniform + ".color");
+        createUniform(uniform + ".direction");
+        createUniform(uniform + ".intensity");
+    }
+
+    public void createMaterialUniform(String uniformName) throws Exception {
+        createUniform(uniformName + ".ambient");
+        createUniform(uniformName + ".diffuse");
+        createUniform(uniformName + ".specular");
+        createUniform(uniformName + ".emissive");
+        createUniform(uniformName + ".reflectance");
+        createUniform(uniformName + ".emissivity");
+        createUniform(uniformName + ".is_textured");
+    }
+
+    public void setUniform(String uniform, Matrix4f value) {
         try (MemoryStack stack = stackPush()) {
             FloatBuffer buf = stack.mallocFloat(16);
-            mat.get(buf);
+            value.get(buf);
             glUniformMatrix4fv(uniforms.get(uniform), false, buf);
         }
     }
 
-    public void setUniform(String uniformName, int value) {
-        glUniform1i(uniforms.get(uniformName), value);
+    public void setUniform(String uniform, Vector3f value) {
+        glUniform3f(uniforms.get(uniform), value.x, value.y, value.z);
+    }
+
+    public void setUniform(String uniform, Vector4f value) {
+        glUniform4f(uniforms.get(uniform), value.x, value.y, value.z, value.w);
+    }
+
+    public void setUniform(String uniform, int value) {
+        glUniform1i(uniforms.get(uniform), value);
+    }
+
+    public void setUniform(String uniform, float value) {
+        glUniform1f(uniforms.get(uniform), value);
+    }
+
+    public void setUniform(String uniform, PointLight light) {
+        setUniform(uniform + ".color", light.getColor() );
+        setUniform(uniform + ".position", light.getPosition());
+        setUniform(uniform + ".intensity", light.getIntensity());
+        PointLight.Attenuation att = light.getAttenuation();
+        setUniform(uniform + ".att.constant", att.getConstant());
+        setUniform(uniform + ".att.linear", att.getLinear());
+        setUniform(uniform + ".att.exponent", att.getExponent());
+    }
+
+    public void setUniform(String uniform, DirectionalLight light) {
+        setUniform(uniform + ".color", light.getColor());
+        setUniform(uniform + ".direction", light.getDirection());
+        setUniform(uniform + ".intensity", light.getIntensity());
+    }
+
+    public void setUniform(String uniform, Material material) {
+        setUniform(uniform + ".ambient", material.getAmbient());
+        setUniform(uniform + ".diffuse", material.getDiffuse());
+        setUniform(uniform + ".specular", material.getSpecular());
+        setUniform(uniform + ".emissive", material.getEmissive());
+        setUniform(uniform + ".reflectance", material.getReflectance());
+        setUniform(uniform + ".emissivity", material.getEmissivity());
+        setUniform(uniform + ".is_textured", material.isTextured() ? 1 : 0);
     }
 
     public void cleanup() {

@@ -37,7 +37,7 @@ public class MouseInput {
     public void input(@NotNull Window window) {
         display_vec.x = 0;
         display_vec.y = 0;
-        if (prev_pos.x > 0 && prev_pos.y > 0 && in_window) {
+        if (in_window) {
             double dx = curr_pos.x - prev_pos.x;
             double dy = curr_pos.y - prev_pos.y;
             boolean rx = dx != 0;

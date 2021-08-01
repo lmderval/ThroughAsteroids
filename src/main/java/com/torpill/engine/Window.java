@@ -150,6 +150,14 @@ public class Window {
         return height;
     }
 
+    public void showCursor() {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
+
+    public void hideCursor() {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    }
+
     public long getWindowHandle() {
         return window;
     }

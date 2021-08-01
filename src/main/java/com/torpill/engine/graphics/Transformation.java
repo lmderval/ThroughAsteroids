@@ -15,7 +15,7 @@ public class Transformation {
 
     public void setWorld(@NotNull Vector3f position, float scale, @NotNull Vector3f rotation, @NotNull Matrix4f world) {
         world.identity()
-                .translate(position)
+                .translate(position.x * 2f, position.y * 2f, position.z * 2f)
                 .rotateX((float) Math.toRadians(rotation.x))
                 .rotateY((float) Math.toRadians(rotation.y))
                 .rotateZ((float) Math.toRadians(rotation.z))
@@ -27,7 +27,7 @@ public class Transformation {
                 .rotateX((float) Math.toRadians(rotation.x))
                 .rotateY((float) Math.toRadians(rotation.y))
                 .rotateZ((float) Math.toRadians(rotation.z))
-                .translate(-position.x, -position.y, -position.z);
+                .translate(-position.x * 2f, -position.y * 2f, -position.z * 2f);
     }
 
     public void setModelView(@NotNull Vector3f position, float scale, @NotNull Vector3f rotation, @NotNull Matrix4f view, @NotNull Matrix4f model_view) {

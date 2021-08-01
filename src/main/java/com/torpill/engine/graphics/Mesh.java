@@ -1,6 +1,6 @@
 package com.torpill.engine.graphics;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL15;
 
 import java.nio.FloatBuffer;
@@ -8,7 +8,6 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL11.GL_DRAW_BUFFER;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
@@ -18,7 +17,7 @@ import static org.lwjgl.system.MemoryUtil.*;
 public class Mesh {
 
     private final int vao;
-    private final int verticesCount;
+    private final int vertices_count;
     private final List<Integer> vbos = new ArrayList<>();
 
     private Material material;
@@ -36,7 +35,7 @@ public class Mesh {
         IntBuffer indicesBuffer = memAllocInt(indices.length);
         indicesBuffer.put(indices).flip();
 
-        verticesCount = indices.length;
+        vertices_count = indices.length;
 
         vao = glGenVertexArrays();
         glBindVertexArray(vao);
@@ -73,6 +72,12 @@ public class Mesh {
         memFree(indicesBuffer);
     }
 
+    public Mesh(@NotNull Mesh mesh) {
+        vao = mesh.vao;
+        vertices_count = mesh.vertices_count;
+        material = mesh.material;
+    }
+
     public Material getMaterial() {
         return material;
     }
@@ -92,7 +97,7 @@ public class Mesh {
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
 
-        glDrawElements(GL_TRIANGLES, verticesCount, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, vertices_count, GL_UNSIGNED_INT, 0);
 
         glDisableVertexAttribArray(2);
         glDisableVertexAttribArray(1);
@@ -102,10 +107,6 @@ public class Mesh {
 
     public void cleanup() {
         glDisableVertexAttribArray(0);
-
-        if (material != null && material.getTexture() != null) {
-            material.getTexture().cleanup();
-        }
 
         // Delete the VBOs
         glBindBuffer(GL_ARRAY_BUFFER, 0);

@@ -1,5 +1,8 @@
 package com.torpill.engine;
 
+import com.torpill.engine.loader.MeshCache;
+import com.torpill.engine.loader.TextureCache;
+import com.torpill.engine.world.Block;
 import org.jetbrains.annotations.NotNull;
 
 import static java.lang.Thread.sleep;
@@ -35,6 +38,7 @@ public class GameEngine {
         timer.init();
         window.init();
         mouse_input.init(window);
+        Block.loadMesh();
         game_logic.init();
     }
 
@@ -62,7 +66,7 @@ public class GameEngine {
     }
 
     private void update(float interval) {
-        game_logic.update(interval, mouse_input);
+        game_logic.update(interval, window, mouse_input);
     }
 
     private void render() {
@@ -84,6 +88,8 @@ public class GameEngine {
 
     private void cleanup() {
         game_logic.cleanup();
+        TextureCache.getInstance().cleanup();
+        MeshCache.getInstance().cleanup();
         window.cleanup();
     }
 }
