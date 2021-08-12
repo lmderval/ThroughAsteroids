@@ -29,10 +29,16 @@ public class Chunk {
     }
 
     public void setBlock(int x, int y, int z, @Nullable Block block) {
+        if (x < 0 || x >= width || y < 0 || y >= height || z < 0 || z >= depth) {
+            return;
+        }
         blocks[x + y * width + z * width * height] = block;
     }
 
     public @Nullable Block getBlock(int x, int y, int z) {
+        if (x < 0 || x >= width || y < 0 || y >= height || z < 0 || z >= depth) {
+            return null;
+        }
         return blocks[x + y * width + z * width * height];
     }
 }

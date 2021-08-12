@@ -10,7 +10,7 @@ import static java.lang.Thread.sleep;
 public class GameEngine {
 
     private static final int TARGET_UPS = 30;
-    private static final int TARGET_FPS = 60;
+    private static final int TARGET_FPS = 120;
 
     private final Window window;
     private final MouseInput mouse_input = new MouseInput();
@@ -46,6 +46,8 @@ public class GameEngine {
         float elapsedTime;
         float accumulator = 0.0f;
         float interval = 1f / TARGET_UPS;
+        int frames = 0;
+        double fps_counter = timer.getTime();
         while (!window.shouldClose()) {
             elapsedTime = timer.getElapsedTime();
             accumulator += elapsedTime;
@@ -55,6 +57,13 @@ public class GameEngine {
                 accumulator -= interval;
             }
             render();
+            frames ++;
+            double diff = timer.getTime() - fps_counter;
+            if (diff > 1.0) {
+                System.out.println((int) (frames / diff) + " FPS");
+                frames = 0;
+                fps_counter = timer.getTime();
+            }
             if (!window.vsync())
                 sync();
         }
@@ -76,14 +85,8 @@ public class GameEngine {
 
     private void sync() {
         float loopSlot = 1f / TARGET_FPS;
-        double endTime = timer.getLastLoopTime() - loopSlot;
-        while (timer.getTime() < endTime) {
-            try {
-                sleep(1L);
-            } catch (InterruptedException e){
-                e.printStackTrace();
-            }
-        }
+        double endTime = timer.getLastLoopTime() + loopSlot;
+        while (timer.getTime() < endTime);
     }
 
     private void cleanup() {

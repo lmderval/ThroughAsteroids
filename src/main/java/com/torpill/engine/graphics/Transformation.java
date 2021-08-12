@@ -22,6 +22,11 @@ public class Transformation {
                 .scale(scale);
     }
 
+    public void setWorld(@NotNull Vector3f position, @NotNull Matrix4f world) {
+        world.identity()
+                .translate(position.x * 2f, position.y * 2f, position.z * 2f);
+    }
+
     public void setView(@NotNull Vector3f position, @NotNull Vector3f rotation, @NotNull Matrix4f view) {
         view.identity()
                 .rotateX((float) Math.toRadians(rotation.x))
@@ -32,6 +37,11 @@ public class Transformation {
 
     public void setModelView(@NotNull Vector3f position, float scale, @NotNull Vector3f rotation, @NotNull Matrix4f view, @NotNull Matrix4f model_view) {
         setWorld(position, scale, rotation, buff_mat);
+        model_view.set(view).mul(buff_mat);
+    }
+
+    public void setModelView(@NotNull Vector3f position, @NotNull Matrix4f view, @NotNull Matrix4f model_view) {
+        setWorld(position, buff_mat);
         model_view.set(view).mul(buff_mat);
     }
 }

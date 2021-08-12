@@ -19,6 +19,12 @@ struct PointLight {
     Attenuation att;
 };
 
+struct SpotLight {
+    vec3 direction;
+    float cut_off;
+    PointLight point;
+};
+
 struct DirectionalLight {
     vec3 color;
     vec3 direction;
@@ -40,7 +46,9 @@ uniform vec3 ambient_light;
 uniform float specular_power;
 uniform Material material;
 uniform PointLight point_light;
+uniform SpotLight spot_light;
 uniform DirectionalLight directional_light;
+uniform vec4 debug_color;
 
 vec4 ambient_color;
 vec4 diffuse_color;
@@ -84,6 +92,19 @@ vec4 calcPointLight(PointLight light, vec3 position, vec3 normal) {
     return light_color / att;
 }
 
+vec4 calcSpotLight(SpotLight light, vec3 position, vec3 normal) {
+    vec3 from_light = normalize(position - light.point.position);
+    vec3 light_dir = normalize(light.direction);
+    float cos_a = dot(from_light, light_dir);
+
+    vec4 color = vec4(0, 0, 0, 0);
+    if (cos_a > light.cut_off) {
+        color = calcPointLight(light.point, position, normal);
+        color *= (1.0 - (1.0 - cos_a) / (1.0 - light.cut_off));
+    }
+    return color;
+}
+
 vec4 calcDirectionalLight(DirectionalLight light, vec3 position, vec3 normal) {
     return calcLightColor(light.color, light.intensity, position, normalize(-light.direction), normal);
 }
@@ -92,5 +113,7 @@ void main() {
     setupColors(material, out_textures);
     vec4 diffuse_specular_color = calcDirectionalLight(directional_light, mv_pos, mv_normal);
     diffuse_specular_color += calcPointLight(point_light, mv_pos, mv_normal);
+    diffuse_specular_color += calcSpotLight(spot_light, mv_pos, mv_normal);
     frag_color = emissive_color * material.emissivity + ambient_color * vec4(ambient_light, 1.0) + diffuse_specular_color;
+    frag_color *= debug_color;
 }

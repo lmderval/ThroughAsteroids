@@ -86,19 +86,39 @@ public class Mesh {
         this.material = material;
     }
 
-    public void render() {
-        if (material != null && material.getTexture() != null) {
-            glActiveTexture(GL_TEXTURE0);
-            material.getTexture().bind();
+    public void bindTexture() {
+        assert material.getTexture() != null;
+        glActiveTexture(GL_TEXTURE0);
+        material.getTexture().bind();
+    }
+
+    public Texture bindTextureWithTest(Texture texture) {
+        if (material != null) {
+            Texture material_texture = material.getTexture();
+            if (material_texture != null && (material_texture != texture)) {
+                bindTexture();
+                texture = material_texture;
+            }
+        }
+        return texture;
+    }
+
+    public void preRender(boolean bind_texture) {
+        if (bind_texture) {
+            bindTexture();
         }
 
         glBindVertexArray(vao);
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
+    }
 
+    public void render() {
         glDrawElements(GL_TRIANGLES, vertices_count, GL_UNSIGNED_INT, 0);
+    }
 
+    public void postRender() {
         glDisableVertexAttribArray(2);
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(0);

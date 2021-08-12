@@ -1,5 +1,10 @@
 package com.torpill.engine.world;
 
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class World {
 
     private final int width;
@@ -10,6 +15,8 @@ public class World {
     private final int chunk_depth;
 
     private final Chunk[] chunks;
+
+    private final List<Entity> entities = new ArrayList<>();
 
     public World(int width, int height, int depth, int chunk_width, int chunk_depth) {
         this.width = width;
@@ -40,13 +47,19 @@ public class World {
         return chunk_depth;
     }
 
-    public Chunk provideChunk(int x, int z) {
+    public @Nullable Chunk provideChunk(int x, int z) {
+        if (x < 0 || x >= width || z < 0 || z >= depth) {
+            return null;
+        }
         Chunk chunk = new Chunk(chunk_width, height, chunk_depth);
         chunks[x + z * width] = chunk;
         return chunk;
     }
 
-    public Chunk getChunk(int x, int z) {
+    public @Nullable Chunk getChunk(int x, int z) {
+        if (x < 0 || x >= width || z < 0 || z >= depth) {
+            return null;
+        }
         Chunk chunk = chunks[x + z * width];
         if (chunk == null) {
             chunk = provideChunk(x, z);
@@ -55,10 +68,25 @@ public class World {
     }
 
     public void setBlock(int x, int y, int z, Block block) {
-        getChunk(x / chunk_width, z / chunk_depth).setBlock(x % chunk_width, y, z % chunk_depth, block);
+        Chunk chunk = getChunk(x / chunk_width, z / chunk_depth);
+        if (chunk != null) {
+            chunk.setBlock(x % chunk_width, y, z % chunk_depth, block);
+        }
     }
 
-    public Block getBlock(int x, int y, int z) {
-        return getChunk(x / chunk_width, z / chunk_depth).getBlock(x % chunk_width, y, z % chunk_depth);
+    public @Nullable Block getBlock(int x, int y, int z) {
+        Chunk chunk = getChunk(x / chunk_width, z / chunk_depth);
+        if (chunk == null) {
+            return null;
+        }
+        return chunk.getBlock(x % chunk_width, y, z % chunk_depth);
+    }
+
+    public void addEntity(Entity entity) {
+        entities.add(entity);
+    }
+
+    public List<Entity> getEntities() {
+        return entities;
     }
 }

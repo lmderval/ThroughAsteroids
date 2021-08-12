@@ -102,9 +102,13 @@ public class Window {
         // bindings available for use.
         GL.createCapabilities();
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
 
         // Set the clear color
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+//        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
 
     public void update() {
@@ -115,6 +119,7 @@ public class Window {
     }
 
     public void cleanup() {
+        glDisable(GL_CULL_FACE);
         glDisable(GL_DEPTH_TEST);
 
         // Free the window callbacks and destroy the window

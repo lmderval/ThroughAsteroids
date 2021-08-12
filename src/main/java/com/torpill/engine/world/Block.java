@@ -6,7 +6,7 @@ import com.torpill.engine.loader.MeshCache;
 
 public class Block {
 
-    private static Mesh BLOCK_MESH;
+    public static Mesh BLOCK_MESH;
 
     private final Mesh mesh;
 

@@ -5,6 +5,8 @@ import org.joml.Vector3f;
 
 public class DirectionalLight {
 
+    public static final DirectionalLight NULL = new DirectionalLight(new Vector3f(), new Vector3f(), 0f);
+
     private final Vector3f color;
     private final Vector3f direction;
     private float intensity;

@@ -5,6 +5,8 @@ import org.joml.Vector3f;
 
 public class PointLight {
 
+    public static final PointLight NULL = new PointLight(new Vector3f(), new Vector3f(), 0f, Attenuation.NULL);
+
     private final Vector3f color;
     private final Vector3f position;
     private float intensity;
@@ -54,11 +56,13 @@ public class PointLight {
 
     public static class Attenuation {
 
+        public static final Attenuation NULL = new Attenuation(0f, 0f, 1f);
+
         private final float exponent;
         private final float linear;
         private final float constant;
 
-        public Attenuation(Attenuation attenuation) {
+        public Attenuation(@NotNull Attenuation attenuation) {
             exponent = attenuation.exponent;
             linear = attenuation.linear;
             constant = attenuation.constant;

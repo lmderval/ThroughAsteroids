@@ -112,13 +112,19 @@ public class ShaderProgram {
         createUniform(uniform + ".att.exponent");
     }
 
+    public void createSpotLightUniform(@NotNull String uniform) throws Exception {
+        createUniform(uniform + ".direction");
+        createUniform(uniform + ".cut_off");
+        createPointLightUniform(uniform + ".point");
+    }
+
     public void createDirectionalLightUniform(@NotNull String uniform) throws Exception {
         createUniform(uniform + ".color");
         createUniform(uniform + ".direction");
         createUniform(uniform + ".intensity");
     }
 
-    public void createMaterialUniform(String uniformName) throws Exception {
+    public void createMaterialUniform(@NotNull String uniformName) throws Exception {
         createUniform(uniformName + ".ambient");
         createUniform(uniformName + ".diffuse");
         createUniform(uniformName + ".specular");
@@ -128,7 +134,7 @@ public class ShaderProgram {
         createUniform(uniformName + ".is_textured");
     }
 
-    public void setUniform(String uniform, Matrix4f value) {
+    public void setUniform(@NotNull String uniform, @NotNull Matrix4f value) {
         try (MemoryStack stack = stackPush()) {
             FloatBuffer buf = stack.mallocFloat(16);
             value.get(buf);
@@ -136,23 +142,27 @@ public class ShaderProgram {
         }
     }
 
-    public void setUniform(String uniform, Vector3f value) {
+    public void setUniform(@NotNull String uniform, @NotNull Vector3f value) {
         glUniform3f(uniforms.get(uniform), value.x, value.y, value.z);
     }
 
-    public void setUniform(String uniform, Vector4f value) {
+    public void setUniform(@NotNull String uniform, @NotNull Vector4f value) {
         glUniform4f(uniforms.get(uniform), value.x, value.y, value.z, value.w);
     }
 
-    public void setUniform(String uniform, int value) {
+    public void setUniform(@NotNull String uniform, int value) {
         glUniform1i(uniforms.get(uniform), value);
     }
 
-    public void setUniform(String uniform, float value) {
+    public void setUniform(@NotNull String uniform, boolean value) {
+        setUniform(uniform, value ? 1 : 0);
+    }
+
+    public void setUniform(@NotNull String uniform, float value) {
         glUniform1f(uniforms.get(uniform), value);
     }
 
-    public void setUniform(String uniform, PointLight light) {
+    public void setUniform(@NotNull String uniform, @NotNull PointLight light) {
         setUniform(uniform + ".color", light.getColor() );
         setUniform(uniform + ".position", light.getPosition());
         setUniform(uniform + ".intensity", light.getIntensity());
@@ -162,20 +172,26 @@ public class ShaderProgram {
         setUniform(uniform + ".att.exponent", att.getExponent());
     }
 
-    public void setUniform(String uniform, DirectionalLight light) {
+    public void setUniform(@NotNull String uniform, @NotNull SpotLight light) {
+        setUniform(uniform + ".direction", light.getDirection());
+        setUniform(uniform + ".cut_off", light.getCutOff());
+        setUniform(uniform + ".point", light.getPointLight());
+    }
+
+    public void setUniform(@NotNull String uniform, @NotNull DirectionalLight light) {
         setUniform(uniform + ".color", light.getColor());
         setUniform(uniform + ".direction", light.getDirection());
         setUniform(uniform + ".intensity", light.getIntensity());
     }
 
-    public void setUniform(String uniform, Material material) {
+    public void setUniform(@NotNull String uniform, @NotNull Material material) {
         setUniform(uniform + ".ambient", material.getAmbient());
         setUniform(uniform + ".diffuse", material.getDiffuse());
         setUniform(uniform + ".specular", material.getSpecular());
         setUniform(uniform + ".emissive", material.getEmissive());
         setUniform(uniform + ".reflectance", material.getReflectance());
         setUniform(uniform + ".emissivity", material.getEmissivity());
-        setUniform(uniform + ".is_textured", material.isTextured() ? 1 : 0);
+        setUniform(uniform + ".is_textured", material.isTextured());
     }
 
     public void cleanup() {
