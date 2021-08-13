@@ -90,6 +90,8 @@ public class Window {
         // Enable v-sync
         if (vsync) {
             glfwSwapInterval(1);
+        } else {
+            glfwSwapInterval(0);
         }
 
         // Make the window visible
