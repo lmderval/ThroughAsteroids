@@ -20,7 +20,7 @@ public class Renderer {
     private static final float Z_NEAR = 0.01f;
     private static final float Z_FAR = 1000.f;
 
-    private static final int RENDER_DISTANCE = 5;
+    private static final int RENDER_DISTANCE = 4;
     private static final int RENDER_DISTANCE_SQUARED = RENDER_DISTANCE * RENDER_DISTANCE;
 
     private static final float SPECULAR_POWER = 10f;
