@@ -7,7 +7,7 @@ public class Main {
 
     public static void main(String[] args) {
         IGameLogic gameLogic = new ThroughAsteroids();
-        GameEngine engine = new GameEngine("Through Asteroids", 1280, 720, false, gameLogic);
+        GameEngine engine = new GameEngine("Through Asteroids", 1280, 720, false, gameLogic, "fonts/Tomorrow.ttf");
         engine.run();
     }
 }

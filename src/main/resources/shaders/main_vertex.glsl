@@ -9,12 +9,12 @@ uniform mat4 mv_mat;
 
 out vec3 mv_pos;
 out vec3 mv_normal;
-out vec2 out_textures;
+out vec2 frag_textures;
 
 void main() {
     vec4 pos = mv_mat * vec4(position, 1.0);
     gl_Position = projection_mat * pos;
-    out_textures = textures;
+    frag_textures = textures;
     mv_pos = pos.xyz;
     mv_normal = normalize(mv_mat * vec4(normal, 0.0)).xyz;
 }

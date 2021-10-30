@@ -1,9 +1,19 @@
 package com.torpill.engine;
 
+import com.torpill.engine.gui.Nuklear;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
+import org.lwjgl.nuklear.NkContext;
+import org.lwjgl.nuklear.NkVec2;
+import org.lwjgl.system.MemoryStack;
+
+import java.nio.DoubleBuffer;
+
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.nuklear.Nuklear.*;
+import static org.lwjgl.nuklear.Nuklear.nk_input_button;
+import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class MouseInput {
 
@@ -16,17 +26,47 @@ public class MouseInput {
     private boolean left_pressed = false;
     private boolean right_pressed = false;
 
-    public void init(@NotNull Window window) {
+    public void init(@NotNull Window window, @NotNull Nuklear nk) {
+        glfwSetScrollCallback(window.getWindowHandle(), (windowHandle, xoffset, yoffset) -> {
+            try (MemoryStack stack = stackPush()) {
+                NkVec2 scroll = NkVec2.mallocStack(stack)
+                        .x((float) xoffset)
+                        .y((float) yoffset);
+                nk_input_scroll(nk.getContext(), scroll);
+            }
+        });
         glfwSetCursorPosCallback(window.getWindowHandle(), (windowHandle, x_pos, y_pos) -> {
             curr_pos.x = x_pos;
             curr_pos.y = y_pos;
+            nk_input_motion(nk.getContext(), (int) x_pos, (int) y_pos);
         });
-        glfwSetCursorEnterCallback(window.getWindowHandle(), (windowHandle, entered) -> {
-            in_window = entered;
-        });
+        glfwSetCursorEnterCallback(window.getWindowHandle(), (windowHandle, entered) -> in_window = entered);
         glfwSetMouseButtonCallback(window.getWindowHandle(), (windowHandle, button, action, mode) -> {
-            left_pressed = button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS;
-            right_pressed = button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS;
+            boolean pressed = action == GLFW_PRESS;
+            left_pressed = button == GLFW_MOUSE_BUTTON_LEFT && pressed;
+            right_pressed = button == GLFW_MOUSE_BUTTON_RIGHT && pressed;
+            try (MemoryStack stack = stackPush()) {
+                DoubleBuffer cx = stack.mallocDouble(1);
+                DoubleBuffer cy = stack.mallocDouble(1);
+
+                glfwGetCursorPos(windowHandle, cx, cy);
+
+                int x = (int) cx.get(0);
+                int y = (int) cy.get(0);
+
+                int nkButton;
+                switch (button) {
+                    case GLFW_MOUSE_BUTTON_RIGHT:
+                        nkButton = NK_BUTTON_RIGHT;
+                        break;
+                    case GLFW_MOUSE_BUTTON_MIDDLE:
+                        nkButton = NK_BUTTON_MIDDLE;
+                        break;
+                    default:
+                        nkButton = NK_BUTTON_LEFT;
+                }
+                nk_input_button(nk.getContext(), nkButton, x, y, pressed);
+            }
         });
     }
 

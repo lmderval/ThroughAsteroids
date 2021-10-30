@@ -1,15 +1,16 @@
-package com.torpill.nuklear;
+package com.torpill.asteroids.gui.demo;
 
+import com.torpill.engine.gui.NuklearScene;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.nuklear.*;
-import org.lwjgl.system.MemoryStack;
+import org.lwjgl.nuklear.NkContext;
+import org.lwjgl.nuklear.NkRect;
+import org.lwjgl.nuklear.Nuklear;
 
 import java.nio.IntBuffer;
 
 import static org.lwjgl.nuklear.Nuklear.*;
-import static org.lwjgl.system.MemoryStack.stackPush;
 
-public class NkTest {
+public class NkTest extends NuklearScene.Gui {
 
     private final String name = "Nuklear Test";
     private final int flags = NK_WINDOW_TITLE | NK_WINDOW_BORDER | NK_WINDOW_SCALABLE | NK_WINDOW_MINIMIZABLE | NK_WINDOW_CLOSABLE;
@@ -17,7 +18,7 @@ public class NkTest {
 
     private IntBuffer currentValue = BufferUtils.createIntBuffer(1);
 
-    void layout(NkContext ctx, int x, int y) {
+    public void layout(NkContext ctx, int x, int y) {
         if (rect == null) {
             rect = NkRect.create();
             nk_rect(x, y, 300, 200, rect);

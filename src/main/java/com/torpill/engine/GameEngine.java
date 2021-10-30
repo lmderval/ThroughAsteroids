@@ -1,5 +1,6 @@
 package com.torpill.engine;
 
+import com.torpill.engine.gui.Nuklear;
 import com.torpill.engine.loader.MeshCache;
 import com.torpill.engine.loader.TextureCache;
 import com.torpill.engine.world.Block;
@@ -15,12 +16,14 @@ public class GameEngine {
     private final Window window;
     private final MouseInput mouse_input = new MouseInput();
     private final IGameLogic game_logic;
+    private final Nuklear nk;
 
     private final Timer timer = new Timer();
 
-    public GameEngine(@NotNull String windowTitle, int width, int height, boolean vsync, @NotNull IGameLogic game_logic) {
+    public GameEngine(@NotNull String windowTitle, int width, int height, boolean vsync, @NotNull IGameLogic game_logic, @NotNull String nkFont) {
         window = new Window(windowTitle, width, height, vsync);
         this.game_logic = game_logic;
+        nk = new Nuklear(nkFont);
     }
 
     public void run() {
@@ -36,8 +39,9 @@ public class GameEngine {
 
     private void init() throws Exception {
         timer.init();
-        window.init();
-        mouse_input.init(window);
+        window.init(nk);
+        nk.setupContext();
+        mouse_input.init(window, nk);
         Block.loadMesh();
         game_logic.init();
     }
@@ -80,6 +84,9 @@ public class GameEngine {
 
     private void render() {
         game_logic.render(window);
+        nk.input(window);
+        game_logic.updateGui(window, nk);
+        nk.render();
         window.update();
     }
 
@@ -90,6 +97,7 @@ public class GameEngine {
     }
 
     private void cleanup() {
+        nk.cleanup();
         game_logic.cleanup();
         TextureCache.getInstance().cleanup();
         MeshCache.getInstance().cleanup();

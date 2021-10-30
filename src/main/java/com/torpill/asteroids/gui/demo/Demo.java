@@ -1,24 +1,25 @@
-package com.torpill.nuklear;
+package com.torpill.asteroids.gui.demo;
 
 /*
  * Copyright LWJGL. All rights reserved.
  * License terms: https://www.lwjgl.org/license
  */
 
-import org.lwjgl.*;
+import com.torpill.engine.gui.NuklearScene;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.nuklear.*;
-import org.lwjgl.system.*;
+import org.lwjgl.system.MemoryStack;
 
-import java.nio.*;
+import java.nio.IntBuffer;
 
 import static org.lwjgl.nuklear.Nuklear.*;
-import static org.lwjgl.system.MemoryStack.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
 
 /**
  * Java port of
  * <a href="https://github.com/vurtun/nuklear/blob/master/demo/glfw_opengl3/main.c">https://github.com/vurtun/nuklear/blob/master/demo/glfw_opengl3/main.c</a>.
  */
-public class Demo {
+public class Demo extends NuklearScene.Gui {
 
     private static final int EASY = 0;
     private static final int HARD = 1;
@@ -36,7 +37,7 @@ public class Demo {
     public Demo() {
     }
 
-    void layout(NkContext ctx, int x, int y) {
+    public void layout(NkContext ctx, int x, int y) {
         try (MemoryStack stack = stackPush()) {
             NkRect rect = NkRect.mallocStack(stack);
 

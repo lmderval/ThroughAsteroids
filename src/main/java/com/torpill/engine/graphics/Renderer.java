@@ -10,7 +10,6 @@ import org.joml.*;
 
 import java.lang.Math;
 
-import static org.joml.RoundingMode.FLOOR;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Renderer {
@@ -20,7 +19,7 @@ public class Renderer {
     private static final float Z_NEAR = 0.01f;
     private static final float Z_FAR = 1000.f;
 
-    private static final int RENDER_DISTANCE = 4;
+    private static final int RENDER_DISTANCE = 3;
     private static final int RENDER_DISTANCE_SQUARED = RENDER_DISTANCE * RENDER_DISTANCE;
 
     private static final float SPECULAR_POWER = 10f;
@@ -80,11 +79,11 @@ public class Renderer {
     public void preRender(@NotNull Window window, @NotNull Camera camera, @NotNull Vector3f ambient_light, @NotNull PointLight point_light, @NotNull SpotLight spot_light, @NotNull DirectionalLight directional_light) {
         clear();
         if (window.isResized()) {
-            glViewport(0, 0, window.getWidth(), window.getHeight());
+            glViewport(0, 0, window.getFramebufferWidth(), window.getFramebufferHeight());
             window.setResized(false);
         }
 
-        transformation.setPerspective(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR, perspective_mat);
+        transformation.setPerspective(FOV, window.getFramebufferWidth(), window.getFramebufferHeight(), Z_NEAR, Z_FAR, perspective_mat);
 
         main.bind();
 

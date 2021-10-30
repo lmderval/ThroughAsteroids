@@ -1,25 +1,32 @@
-package com.torpill.nuklear;
+package com.torpill.asteroids.gui.demo;
 
 /*
  * Copyright LWJGL. All rights reserved.
  * License terms: https://www.lwjgl.org/license
  */
 
-import org.lwjgl.nuklear.*;
-import org.lwjgl.system.*;
+import com.torpill.engine.gui.NuklearScene;
+import org.lwjgl.nuklear.NkContext;
+import org.lwjgl.nuklear.NkPluginFilter;
+import org.lwjgl.nuklear.NkRect;
+import org.lwjgl.nuklear.Nuklear;
+import org.lwjgl.system.MemoryStack;
 
-import java.nio.*;
-import java.text.*;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
 
 import static org.lwjgl.nuklear.Nuklear.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.system.MemoryUtil.memASCII;
 
 /**
  * Java port of
  * <a href="https://github.com/vurtun/nuklear/blob/master/demo/calculator.c">https://github.com/vurtun/nuklear/blob/master/demo/calculator.c</a>.
  */
-public class Calculator {
+public class Calculator extends NuklearScene.Gui {
 
     private static final String NUMS = "789456123";
     private static final String OPS = "+-*/";
@@ -54,7 +61,7 @@ public class Calculator {
         numberFilter = NkPluginFilter.create(Nuklear::nnk_filter_float);
     }
 
-    void layout(NkContext ctx, int x, int y) {
+    public void layout(NkContext ctx, int x, int y) {
         try (MemoryStack stack = stackPush()) {
             NkRect rect = NkRect.mallocStack(stack);
             if (nk_begin(

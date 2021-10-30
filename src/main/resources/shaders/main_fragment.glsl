@@ -2,9 +2,9 @@
 
 in vec3 mv_pos;
 in vec3 mv_normal;
-in vec2 out_textures;
+in vec2 frag_textures;
 
-out vec4 frag_color;
+out vec4 out_color;
 
 struct Attenuation {
     float constant;
@@ -110,10 +110,10 @@ vec4 calcDirectionalLight(DirectionalLight light, vec3 position, vec3 normal) {
 }
 
 void main() {
-    setupColors(material, out_textures);
+    setupColors(material, frag_textures);
     vec4 diffuse_specular_color = calcDirectionalLight(directional_light, mv_pos, mv_normal);
     diffuse_specular_color += calcPointLight(point_light, mv_pos, mv_normal);
     diffuse_specular_color += calcSpotLight(spot_light, mv_pos, mv_normal);
-    frag_color = emissive_color * material.emissivity + ambient_color * vec4(ambient_light, 1.0) + diffuse_specular_color;
-    frag_color *= debug_color;
+    out_color = emissive_color * material.emissivity + ambient_color * vec4(ambient_light, 1.0) + diffuse_specular_color;
+    out_color *= debug_color;
 }

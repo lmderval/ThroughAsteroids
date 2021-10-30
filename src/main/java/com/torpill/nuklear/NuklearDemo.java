@@ -89,7 +89,7 @@ public class NuklearDemo {
 
     public NuklearDemo() {
         try {
-            this.ttf = IOUtil.ioResourceToByteBuffer("demo/Minecraft.ttf", 512 * 1024);
+            this.ttf = IOUtil.ioResourceToByteBuffer("fonts/Tomorrow.ttf", 512 * 1024);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

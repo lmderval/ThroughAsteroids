@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL20C.glDeleteProgram;
+import static org.lwjgl.opengl.GL20C.glDeleteShader;
+import static org.lwjgl.opengl.GL20C.glDetachShader;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class ShaderProgram {
@@ -197,6 +200,10 @@ public class ShaderProgram {
     public void cleanup() {
         unbind();
         if (program != 0) {
+            glDetachShader(program, vertexShader);
+            glDetachShader(program, fragmentShader);
+            glDeleteShader(vertexShader);
+            glDeleteShader(fragmentShader);
             glDeleteProgram(program);
         }
     }

@@ -1,7 +1,10 @@
 package com.torpill.asteroids;
 
+import com.torpill.asteroids.gui.NkMainScene;
 import com.torpill.engine.*;
 import com.torpill.engine.graphics.*;
+import com.torpill.engine.gui.Nuklear;
+import com.torpill.engine.gui.NuklearScene;
 import com.torpill.engine.loader.MeshCache;
 import com.torpill.engine.loader.StaticMeshesLoader;
 import com.torpill.engine.loader.TextureCache;
@@ -14,6 +17,7 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+import org.lwjgl.nuklear.NkContext;
 import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -41,7 +45,10 @@ public class ThroughAsteroids implements IGameLogic {
 
     private World world;
 
+    private final NuklearScene nkScene = new NkMainScene();
+
     private long tick = 0L;
+    private boolean paused = true;
 
     @Override
     public void init() throws Exception {
@@ -119,18 +126,18 @@ public class ThroughAsteroids implements IGameLogic {
 
         // Update camera based on mouse
         rotation.set(mouse_input.getDisplayVec());
-//        if (mouse_input.isRightButtonPressed()) {
-        camera.rotate(rotation.x * MOUSE_SENSITIVITY, rotation.y * MOUSE_SENSITIVITY, 0);
-        if (camera.getRotation().x > 90f) {
-            camera.getRotation().x = 90f;
+        if (!paused) {
+            camera.rotate(rotation.x * MOUSE_SENSITIVITY, rotation.y * MOUSE_SENSITIVITY, 0);
+            if (camera.getRotation().x > 90f) {
+                camera.getRotation().x = 90f;
+            }
+            if (camera.getRotation().x < -90f) {
+                camera.getRotation().x = -90f;
+            }
+            window.disableCursor();
+        } else {
+            window.showCursor();
         }
-        if (camera.getRotation().x < -90f) {
-            camera.getRotation().x = -90f;
-        }
-        window.hideCursor();
-//        } else {
-//            window.showCursor();
-//        }
 
         // Update view matrix
         if (direction.lengthSquared() > 0 || (rotation.lengthSquared() > 0 /* && mouse_input.isRightButtonPressed() */)) {
@@ -144,12 +151,21 @@ public class ThroughAsteroids implements IGameLogic {
     }
 
     @Override
+    public void updateGui(@NotNull Window window, @NotNull Nuklear nk) {
+        nkScene.update(window, nk);
+    }
+
+    @Override
     public void render(@NotNull Window window) {
-        renderer.preRender(window, camera, ambient_light, point_light, spot_light, directional_light);
-
-        renderer.renderWorld(world, camera);
-
-        renderer.postRender();
+        {
+            // Nuklear rendering
+        }
+        {
+            // World rendering
+            renderer.preRender(window, camera, ambient_light, point_light, spot_light, directional_light);
+            renderer.renderWorld(world, camera);
+            renderer.postRender();
+        }
     }
 
     @Override
