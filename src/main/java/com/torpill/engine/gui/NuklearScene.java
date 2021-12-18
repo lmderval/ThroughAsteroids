@@ -10,6 +10,12 @@ public interface NuklearScene {
 
     abstract class Gui {
 
+        protected final String name;
+
+        protected Gui(String name) {
+            this.name = name;
+        }
+
         public abstract void layout(NkContext ctx, int x, int y);
     }
 }

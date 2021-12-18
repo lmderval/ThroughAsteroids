@@ -2,7 +2,6 @@ package com.torpill.engine.gui;
 
 import com.torpill.engine.Window;
 import com.torpill.engine.graphics.ShaderProgram;
-import com.torpill.nuklear.IOUtil;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.lwjgl.nuklear.*;
@@ -18,6 +17,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Objects;
 
+import static com.torpill.engine.Utils.ioResourceToByteBuffer;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.nuklear.Nuklear.*;
 import static org.lwjgl.opengl.GL11C.*;
@@ -71,7 +71,7 @@ public class Nuklear {
 
     public Nuklear(@NotNull String nkFont) {
         try {
-            this.ttf = IOUtil.ioResourceToByteBuffer(nkFont, 512 * 1024);
+            this.ttf = ioResourceToByteBuffer(nkFont, 512 * 1024);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

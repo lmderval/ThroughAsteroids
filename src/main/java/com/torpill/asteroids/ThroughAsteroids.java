@@ -1,28 +1,25 @@
 package com.torpill.asteroids;
 
-import com.torpill.asteroids.gui.NkMainScene;
-import com.torpill.engine.*;
+import com.torpill.asteroids.gui.demo.NkDemoScene;
+import com.torpill.asteroids.gui.pause.NkPauseScene;
+import com.torpill.engine.IGameLogic;
+import com.torpill.engine.KeyboardInput;
+import com.torpill.engine.MouseInput;
+import com.torpill.engine.Window;
 import com.torpill.engine.graphics.*;
 import com.torpill.engine.gui.Nuklear;
 import com.torpill.engine.gui.NuklearScene;
 import com.torpill.engine.loader.MeshCache;
-import com.torpill.engine.loader.StaticMeshesLoader;
 import com.torpill.engine.loader.TextureCache;
 import com.torpill.engine.world.Block;
-import com.torpill.engine.world.Chunk;
 import com.torpill.engine.world.Entity;
 import com.torpill.engine.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
-import org.lwjgl.nuklear.NkContext;
-import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
-import static org.lwjgl.opengl.GL11.GL_LINE;
 
 public class ThroughAsteroids implements IGameLogic {
 
@@ -42,13 +39,13 @@ public class ThroughAsteroids implements IGameLogic {
 
     private final Vector3i direction = new Vector3i();
     private final Vector2f rotation = new Vector2f();
-
+    private final NuklearScene nkDemo = new NkDemoScene();
+    private final NuklearScene nkPause = new NkPauseScene();
     private World world;
 
-    private final NuklearScene nkScene = new NkMainScene();
-
     private long tick = 0L;
-    private boolean paused = true;
+    private boolean paused = false;
+    private boolean quit = false;
 
     @Override
     public void init() throws Exception {
@@ -74,8 +71,8 @@ public class ThroughAsteroids implements IGameLogic {
             }
         }
         world.setBlock(10, 4, 0, grass_block);
-        for (int i = 0; i < 9; i ++) {
-            for (int k = 0; k < 7; k ++) {
+        for (int i = 0; i < 9; i++) {
+            for (int k = 0; k < 7; k++) {
                 world.setBlock(16 + i, 3, 23 + k, null);
             }
         }
@@ -97,36 +94,43 @@ public class ThroughAsteroids implements IGameLogic {
     }
 
     @Override
-    public void input(@NotNull Window window, @NotNull MouseInput mouse_input) {
+    public void input(@NotNull Window window, @NotNull MouseInput mouse_input, @NotNull KeyboardInput keyboard_input) {
         direction.zero();
-        if (window.isKeyPressed(GLFW_KEY_A)) {
+        if (keyboard_input.isPressed(GLFW_KEY_A)) {
             direction.x -= 1;
         }
-        if (window.isKeyPressed(GLFW_KEY_D)) {
+        if (keyboard_input.isPressed(GLFW_KEY_D)) {
             direction.x += 1;
         }
-        if (window.isKeyPressed(GLFW_KEY_SPACE)) {
+        if (keyboard_input.isPressed(GLFW_KEY_SPACE)) {
             direction.y += 1;
         }
-        if (window.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
+        if (keyboard_input.isPressed(GLFW_KEY_LEFT_SHIFT)) {
             direction.y -= 1;
         }
-        if (window.isKeyPressed(GLFW_KEY_W)) {
+        if (keyboard_input.isPressed(GLFW_KEY_W)) {
             direction.z -= 1;
         }
-        if (window.isKeyPressed(GLFW_KEY_S)) {
+        if (keyboard_input.isPressed(GLFW_KEY_S)) {
             direction.z += 1;
         }
     }
 
     @Override
-    public void update(float interval, @NotNull Window window, @NotNull MouseInput mouse_input) {
-        // Update camera position
-        camera.move(direction.x * CAMERA_POS_STEP, direction.y * CAMERA_POS_STEP, direction.z * CAMERA_POS_STEP);
-
-        // Update camera based on mouse
-        rotation.set(mouse_input.getDisplayVec());
+    public void update(float interval, @NotNull Window window, @NotNull MouseInput mouse_input, @NotNull KeyboardInput keyboard_input) {
+        if (quit) {
+            window.setShouldClose(true);
+            return;
+        }
+        if (keyboard_input.use(GLFW_KEY_ESCAPE))
+            paused = !paused;
         if (!paused) {
+            // Update camera based on mouse
+            rotation.set(mouse_input.getDisplayVec());
+
+            // Update camera position
+            camera.move(direction.x * CAMERA_POS_STEP, direction.y * CAMERA_POS_STEP, direction.z * CAMERA_POS_STEP);
+
             camera.rotate(rotation.x * MOUSE_SENSITIVITY, rotation.y * MOUSE_SENSITIVITY, 0);
             if (camera.getRotation().x > 90f) {
                 camera.getRotation().x = 90f;
@@ -135,24 +139,26 @@ public class ThroughAsteroids implements IGameLogic {
                 camera.getRotation().x = -90f;
             }
             window.disableCursor();
+
+            // Update view matrix
+            if (direction.lengthSquared() > 0 || (rotation.lengthSquared() > 0 /* && mouse_input.isRightButtonPressed() */)) {
+                camera.updateViewMat();
+            }
+
+            spot_light.setDirection((float) Math.cos(Math.toRadians(tick)), (float) Math.sin(Math.toRadians(tick)), -1f);
+
+            // Next tick
+            tick++;
         } else {
             window.showCursor();
         }
-
-        // Update view matrix
-        if (direction.lengthSquared() > 0 || (rotation.lengthSquared() > 0 /* && mouse_input.isRightButtonPressed() */)) {
-            camera.updateViewMat();
-        }
-
-        spot_light.setDirection((float) Math.cos(Math.toRadians(tick)), (float) Math.sin(Math.toRadians(tick)), -1f);
-
-        // Next tick
-        tick++;
     }
 
     @Override
     public void updateGui(@NotNull Window window, @NotNull Nuklear nk) {
-        nkScene.update(window, nk);
+//        nkDemo.update(window, nk);
+        if (paused)
+            nkPause.update(window, nk);
     }
 
     @Override
@@ -171,5 +177,17 @@ public class ThroughAsteroids implements IGameLogic {
     @Override
     public void cleanup() {
         renderer.cleanup();
+    }
+
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
+    public void quit() {
+        quit = true;
     }
 }

@@ -1,13 +1,17 @@
 package com.torpill.asteroids;
 
 import com.torpill.engine.GameEngine;
-import com.torpill.engine.IGameLogic;
 
 public class Main {
 
+    private static final ThroughAsteroids INSTANCE = new ThroughAsteroids();
+
+    public static ThroughAsteroids getInstance() {
+        return INSTANCE;
+    }
+
     public static void main(String[] args) {
-        IGameLogic gameLogic = new ThroughAsteroids();
-        GameEngine engine = new GameEngine("Through Asteroids", 1280, 720, false, gameLogic, "fonts/Tomorrow.ttf");
+        GameEngine engine = new GameEngine("Through Asteroids", 1280, 720, false, INSTANCE, "fonts/Tomorrow.ttf");
         engine.run();
     }
 }

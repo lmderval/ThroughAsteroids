@@ -70,11 +70,11 @@ public class NuklearDemo {
             display_width,
             display_height;
 
-    private NkContext ctx = NkContext.create();
-    private NkUserFont default_font = NkUserFont.create();
+    private final NkContext ctx = NkContext.create();
+    private final NkUserFont default_font = NkUserFont.create();
 
-    private NkBuffer cmds = NkBuffer.create();
-    private NkDrawNullTexture null_texture = NkDrawNullTexture.create();
+    private final NkBuffer cmds = NkBuffer.create();
+    private final NkDrawNullTexture null_texture = NkDrawNullTexture.create();
 
     private int vbo, vao, ebo;
     private int prog;
@@ -624,7 +624,7 @@ public class NuklearDemo {
                         (int) (cmd.clip_rect().h() * fb_scale_y)
                 );
                 glDrawElements(GL_TRIANGLES, cmd.elem_count(), GL_UNSIGNED_SHORT, offset);
-                offset += cmd.elem_count() * 2;
+                offset += cmd.elem_count() * 2L;
             }
             nk_clear(ctx);
         }

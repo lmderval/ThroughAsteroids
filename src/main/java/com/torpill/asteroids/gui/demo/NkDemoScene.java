@@ -1,16 +1,16 @@
-package com.torpill.asteroids.gui;
+package com.torpill.asteroids.gui.demo;
 
-import com.torpill.asteroids.gui.demo.Calculator;
-import com.torpill.asteroids.gui.demo.Demo;
-import com.torpill.asteroids.gui.demo.NkTest;
 import com.torpill.engine.Window;
 import com.torpill.engine.gui.Nuklear;
 import com.torpill.engine.gui.NuklearScene;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Random;
 import org.lwjgl.nuklear.NkColor;
 import org.lwjgl.nuklear.NkColorf;
 
-public class NkMainScene implements NuklearScene {
+public class NkDemoScene implements NuklearScene {
+
+    private final Random rand = new Random();
 
     private final Demo demo = new Demo();
     private final Calculator calc = new Calculator();
@@ -30,7 +30,9 @@ public class NkMainScene implements NuklearScene {
                 (byte) (bg.a() * 0xFF)
         );
 
-        demo.layout(nk.getContext(), 50, 50);
+        int offX = rand.nextInt(9) - 4;
+        int offY = rand.nextInt(9) - 4;
+        demo.layout(nk.getContext(), window.getFramebufferWidth() - 280 + offX, 50 + offY);
         calc.layout(nk.getContext(), 300, 50);
         nkTest.layout(nk.getContext(), 500, 50);
     }

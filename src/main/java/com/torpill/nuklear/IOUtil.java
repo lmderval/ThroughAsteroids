@@ -5,6 +5,7 @@ package com.torpill.nuklear;
  * License terms: https://www.lwjgl.org/license
  */
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.*;
 
 import java.io.*;
@@ -20,7 +21,7 @@ public final class IOUtil {
     private IOUtil() {
     }
 
-    private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
+    private static ByteBuffer resizeBuffer(@NotNull ByteBuffer buffer, int newCapacity) {
         ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
         buffer.flip();
         newBuffer.put(buffer);
@@ -37,7 +38,7 @@ public final class IOUtil {
      *
      * @throws IOException if an IO error occurs
      */
-    public static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException {
+    public static ByteBuffer ioResourceToByteBuffer(@NotNull String resource, int bufferSize) throws IOException {
         ByteBuffer buffer;
 
         Path path = Paths.get(resource);
@@ -45,23 +46,25 @@ public final class IOUtil {
             try (SeekableByteChannel fc = Files.newByteChannel(path)) {
                 buffer = BufferUtils.createByteBuffer((int)fc.size() + 1);
                 while (fc.read(buffer) != -1) {
-                    ;
                 }
             }
         } else {
             try (
-                    InputStream source = IOUtil.class.getClassLoader().getResourceAsStream(resource);
-                    ReadableByteChannel rbc = Channels.newChannel(source)
+                    InputStream source = IOUtil.class.getClassLoader().getResourceAsStream(resource)
             ) {
-                buffer = createByteBuffer(bufferSize);
+                assert source != null;
+                try (ReadableByteChannel rbc = Channels.newChannel(source)
+                ) {
+                    buffer = createByteBuffer(bufferSize);
 
-                while (true) {
-                    int bytes = rbc.read(buffer);
-                    if (bytes == -1) {
-                        break;
-                    }
-                    if (buffer.remaining() == 0) {
-                        buffer = resizeBuffer(buffer, buffer.capacity() * 3 / 2); // 50%
+                    while (true) {
+                        int bytes = rbc.read(buffer);
+                        if (bytes == -1) {
+                            break;
+                        }
+                        if (buffer.remaining() == 0) {
+                            buffer = resizeBuffer(buffer, buffer.capacity() * 3 / 2); // 50%
+                        }
                     }
                 }
             }

@@ -32,9 +32,10 @@ public class Demo extends NuklearScene.Gui {
 
     private int op = EASY;
 
-    private IntBuffer compression = BufferUtils.createIntBuffer(1).put(0, 20);
+    private final IntBuffer compression = BufferUtils.createIntBuffer(1).put(0, 20);
 
     public Demo() {
+        super("Demo");
     }
 
     public void layout(NkContext ctx, int x, int y) {
@@ -43,10 +44,15 @@ public class Demo extends NuklearScene.Gui {
 
             if (nk_begin(
                     ctx,
-                    "Demo",
+                    name,
                     nk_rect(x, y, 230, 250, rect),
                     NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_SCALABLE | NK_WINDOW_MINIMIZABLE | NK_WINDOW_TITLE
             )) {
+                NkVec2 vec2 = NkVec2.mallocStack(stack);
+                vec2.x(x);
+                vec2.y(y);
+                nk_window_set_position(ctx, name, vec2);
+
                 nk_layout_row_static(ctx, 30, 80, 1);
                 if (nk_button_label(ctx, "button")) {
                     System.out.println("button pressed");

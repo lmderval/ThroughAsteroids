@@ -15,6 +15,7 @@ public class GameEngine {
 
     private final Window window;
     private final MouseInput mouse_input = new MouseInput();
+    private final KeyboardInput keyboard_input = new KeyboardInput();
     private final IGameLogic game_logic;
     private final Nuklear nk;
 
@@ -42,6 +43,7 @@ public class GameEngine {
         window.init(nk);
         nk.setupContext();
         mouse_input.init(window, nk);
+        keyboard_input.init(window, nk);
         Block.loadMesh();
         game_logic.init();
     }
@@ -75,11 +77,11 @@ public class GameEngine {
 
     private void input() {
         mouse_input.input(window);
-        game_logic.input(window, mouse_input);
+        game_logic.input(window, mouse_input, keyboard_input);
     }
 
     private void update(float interval) {
-        game_logic.update(interval, window, mouse_input);
+        game_logic.update(interval, window, mouse_input, keyboard_input);
     }
 
     private void render() {

@@ -37,7 +37,7 @@ public class Window {
     }
 
     public void init(@NotNull Nuklear nk) throws Exception {
-        // Setup an error callback. The default implementation
+        // Set up an error callback. The default implementation
         // will print the error message in System.err.
         GLFWErrorCallback.createPrint(System.err).set();
 
@@ -72,73 +72,7 @@ public class Window {
 
         NkContext ctx = nk.init(window);
 
-        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            boolean press = action == GLFW_PRESS;
-            switch (key) {
-                case GLFW_KEY_ESCAPE:
-                    if (action == GLFW_RELEASE && mods == GLFW_MOD_ALT)
-                        glfwSetWindowShouldClose(window, true);
-                    break;
-                case GLFW_KEY_DELETE:
-                    nk_input_key(ctx, NK_KEY_DEL, press);
-                    break;
-                case GLFW_KEY_ENTER:
-                    nk_input_key(ctx, NK_KEY_ENTER, press);
-                    break;
-                case GLFW_KEY_TAB:
-                    nk_input_key(ctx, NK_KEY_TAB, press);
-                    break;
-                case GLFW_KEY_BACKSPACE:
-                    nk_input_key(ctx, NK_KEY_BACKSPACE, press);
-                    break;
-                case GLFW_KEY_UP:
-                    nk_input_key(ctx, NK_KEY_UP, press);
-                    break;
-                case GLFW_KEY_DOWN:
-                    nk_input_key(ctx, NK_KEY_DOWN, press);
-                    break;
-                case GLFW_KEY_HOME:
-                    nk_input_key(ctx, NK_KEY_TEXT_START, press);
-                    nk_input_key(ctx, NK_KEY_SCROLL_START, press);
-                    break;
-                case GLFW_KEY_END:
-                    nk_input_key(ctx, NK_KEY_TEXT_END, press);
-                    nk_input_key(ctx, NK_KEY_SCROLL_END, press);
-                    break;
-                case GLFW_KEY_PAGE_DOWN:
-                    nk_input_key(ctx, NK_KEY_SCROLL_DOWN, press);
-                    break;
-                case GLFW_KEY_PAGE_UP:
-                    nk_input_key(ctx, NK_KEY_SCROLL_UP, press);
-                    break;
-                case GLFW_KEY_LEFT_SHIFT:
-                case GLFW_KEY_RIGHT_SHIFT:
-                    nk_input_key(ctx, NK_KEY_SHIFT, press);
-                    break;
-                case GLFW_KEY_LEFT_CONTROL:
-                case GLFW_KEY_RIGHT_CONTROL:
-                    if (press) {
-                        nk_input_key(ctx, NK_KEY_COPY, glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS);
-                        nk_input_key(ctx, NK_KEY_PASTE, glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS);
-                        nk_input_key(ctx, NK_KEY_CUT, glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS);
-                        nk_input_key(ctx, NK_KEY_TEXT_UNDO, glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS);
-                        nk_input_key(ctx, NK_KEY_TEXT_REDO, glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS);
-                        nk_input_key(ctx, NK_KEY_TEXT_WORD_LEFT, glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS);
-                        nk_input_key(ctx, NK_KEY_TEXT_WORD_RIGHT, glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS);
-                        nk_input_key(ctx, NK_KEY_TEXT_LINE_START, glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS);
-                        nk_input_key(ctx, NK_KEY_TEXT_LINE_END, glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS);
-                    } else {
-                        nk_input_key(ctx, NK_KEY_LEFT, glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS);
-                        nk_input_key(ctx, NK_KEY_RIGHT, glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS);
-                        nk_input_key(ctx, NK_KEY_COPY, false);
-                        nk_input_key(ctx, NK_KEY_PASTE, false);
-                        nk_input_key(ctx, NK_KEY_CUT, false);
-                        nk_input_key(ctx, NK_KEY_SHIFT, false);
-                    }
-                    break;
-            }
-        });
+
 
         glfwSetCharCallback(window, (window, codepoint) -> nk_input_unicode(ctx, codepoint));
 
@@ -204,10 +138,6 @@ public class Window {
         Objects.requireNonNull(glfwSetErrorCallback(null)).free();
     }
 
-    public boolean isKeyPressed(int keyCode) {
-        return glfwGetKey(window, keyCode) == GLFW_PRESS;
-    }
-
     public boolean vsync() {
         return vsync;
     }
@@ -262,6 +192,10 @@ public class Window {
 
     public boolean shouldClose() {
         return glfwWindowShouldClose(window);
+    }
+
+    public void setShouldClose(boolean value) {
+        glfwSetWindowShouldClose(window, value);
     }
 
     public void setInputMode(int mode, int value) {

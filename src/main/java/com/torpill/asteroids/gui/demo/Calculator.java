@@ -37,9 +37,8 @@ public class Calculator extends NuklearScene.Gui {
 
     private boolean set;
 
-    private double[]
-            a = new double[1],
-            b = new double[1];
+    private final double[] a = new double[1];
+    private final double[] b = new double[1];
 
     private double[] current = a;
 
@@ -48,6 +47,8 @@ public class Calculator extends NuklearScene.Gui {
     final NkPluginFilter numberFilter;
 
     public Calculator() {
+        super("Calculator");
+
         format.setGroupingUsed(false);
         format.setDecimalSeparatorAlwaysShown(true);
 
@@ -66,7 +67,7 @@ public class Calculator extends NuklearScene.Gui {
             NkRect rect = NkRect.mallocStack(stack);
             if (nk_begin(
                     ctx,
-                    "Calculator",
+                    name,
                     nk_rect(x, y, 180, 250, rect),
                     NK_WINDOW_BORDER | NK_WINDOW_NO_SCROLLBAR | NK_WINDOW_MOVABLE
             )) {
@@ -108,8 +109,9 @@ public class Calculator extends NuklearScene.Gui {
                             op = 0;
                         }
                     } else if (((i + 1) % 4) != 0) {
-                        if (nk_button_text(ctx, Character.toString(NUMS.charAt((i / 4) * 3 + i % 4)))) {
-                            current[0] = current[0] * 10.0f + (NUMS.charAt((i / 4) * 3 + i % 4) - '0');
+                        char c = NUMS.charAt((i / 4) * 3 + i % 4);
+                        if (nk_button_text(ctx, Character.toString(c))) {
+                            current[0] = current[0] * 10.0f + (c - '0');
                             set = false;
                         }
                     } else if (nk_button_text(ctx, Character.toString(OPS.charAt(i / 4)))) {

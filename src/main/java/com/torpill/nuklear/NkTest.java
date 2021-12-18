@@ -15,7 +15,7 @@ public class NkTest {
     private final int flags = NK_WINDOW_TITLE | NK_WINDOW_BORDER | NK_WINDOW_SCALABLE | NK_WINDOW_MINIMIZABLE | NK_WINDOW_CLOSABLE;
     private NkRect rect;
 
-    private IntBuffer currentValue = BufferUtils.createIntBuffer(1);
+    private final IntBuffer currentValue = BufferUtils.createIntBuffer(1);
 
     void layout(NkContext ctx, int x, int y) {
         if (rect == null) {

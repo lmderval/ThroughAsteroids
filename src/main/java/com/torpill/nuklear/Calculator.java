@@ -30,9 +30,9 @@ public class Calculator {
 
     private boolean set;
 
-    private double[]
-            a = new double[1],
-            b = new double[1];
+    private final double[]
+            a = new double[1];
+    private final double[] b = new double[1];
 
     private double[] current = a;
 

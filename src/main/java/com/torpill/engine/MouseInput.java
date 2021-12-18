@@ -27,18 +27,19 @@ public class MouseInput {
     private boolean right_pressed = false;
 
     public void init(@NotNull Window window, @NotNull Nuklear nk) {
+        NkContext ctx = nk.getContext();
         glfwSetScrollCallback(window.getWindowHandle(), (windowHandle, xoffset, yoffset) -> {
             try (MemoryStack stack = stackPush()) {
                 NkVec2 scroll = NkVec2.mallocStack(stack)
                         .x((float) xoffset)
                         .y((float) yoffset);
-                nk_input_scroll(nk.getContext(), scroll);
+                nk_input_scroll(ctx, scroll);
             }
         });
         glfwSetCursorPosCallback(window.getWindowHandle(), (windowHandle, x_pos, y_pos) -> {
             curr_pos.x = x_pos;
             curr_pos.y = y_pos;
-            nk_input_motion(nk.getContext(), (int) x_pos, (int) y_pos);
+            nk_input_motion(ctx, (int) x_pos, (int) y_pos);
         });
         glfwSetCursorEnterCallback(window.getWindowHandle(), (windowHandle, entered) -> in_window = entered);
         glfwSetMouseButtonCallback(window.getWindowHandle(), (windowHandle, button, action, mode) -> {
@@ -65,7 +66,7 @@ public class MouseInput {
                     default:
                         nkButton = NK_BUTTON_LEFT;
                 }
-                nk_input_button(nk.getContext(), nkButton, x, y, pressed);
+                nk_input_button(ctx, nkButton, x, y, pressed);
             }
         });
     }

@@ -4,28 +4,31 @@ import com.torpill.engine.gui.NuklearScene;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.nuklear.NkContext;
 import org.lwjgl.nuklear.NkRect;
-import org.lwjgl.nuklear.Nuklear;
+import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
 
 import static org.lwjgl.nuklear.Nuklear.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class NkTest extends NuklearScene.Gui {
 
-    private final String name = "Nuklear Test";
-    private final int flags = NK_WINDOW_TITLE | NK_WINDOW_BORDER | NK_WINDOW_SCALABLE | NK_WINDOW_MINIMIZABLE | NK_WINDOW_CLOSABLE;
-    private NkRect rect;
+    private final IntBuffer currentValue = BufferUtils.createIntBuffer(1);
 
-    private IntBuffer currentValue = BufferUtils.createIntBuffer(1);
+    public NkTest() {
+        super("Nuklear Test");
+    }
 
+    @Override
     public void layout(NkContext ctx, int x, int y) {
-        if (rect == null) {
-            rect = NkRect.create();
-            nk_rect(x, y, 300, 200, rect);
-            nk_begin(ctx, name, rect, flags);
-            nk_end(ctx);
-        } else if (!nk_window_is_closed(ctx, name)) {
-            if (nk_begin(ctx, name, rect, flags)) {
+        try (MemoryStack stack = stackPush()) {
+            NkRect rect = NkRect.mallocStack(stack);
+            if (nk_begin(
+                    ctx,
+                    name,
+                    nk_rect(x, y, 300, 200, rect),
+                    NK_WINDOW_TITLE | NK_WINDOW_BORDER | NK_WINDOW_SCALABLE | NK_WINDOW_MINIMIZABLE
+            )) {
                 nk_layout_row_dynamic(ctx, 32, 1);
                 nk_label(ctx, "Slider", NK_TEXT_ALIGN_LEFT | NK_TEXT_ALIGN_BOTTOM);
 

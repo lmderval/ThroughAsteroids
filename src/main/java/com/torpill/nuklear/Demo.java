@@ -31,7 +31,7 @@ public class Demo {
 
     private int op = EASY;
 
-    private IntBuffer compression = BufferUtils.createIntBuffer(1).put(0, 20);
+    private final IntBuffer compression = BufferUtils.createIntBuffer(1).put(0, 20);
 
     public Demo() {
     }
