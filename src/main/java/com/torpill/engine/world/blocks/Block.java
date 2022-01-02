@@ -1,4 +1,4 @@
-package com.torpill.engine.world;
+package com.torpill.engine.world.blocks;
 
 import com.torpill.engine.graphics.Material;
 import com.torpill.engine.graphics.Mesh;

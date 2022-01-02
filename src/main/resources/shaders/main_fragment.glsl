@@ -44,6 +44,7 @@ struct Material {
 uniform sampler2D tex_sampler;
 uniform vec3 ambient_light;
 uniform float specular_power;
+uniform int selected;
 uniform Material material;
 uniform PointLight point_light;
 uniform SpotLight spot_light;
@@ -116,4 +117,7 @@ void main() {
     diffuse_specular_color += calcSpotLight(spot_light, mv_pos, mv_normal);
     out_color = emissive_color * material.emissivity + ambient_color * vec4(ambient_light, 1.0) + diffuse_specular_color;
     out_color *= debug_color;
+    if (selected == 1) {
+        out_color *= vec4(0.5, 0.5, 0.5, 1.0);
+    }
 }

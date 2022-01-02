@@ -1,4 +1,4 @@
-package com.torpill.engine.world;
+package com.torpill.engine.world.entities;
 
 import com.torpill.engine.graphics.Mesh;
 import com.torpill.engine.graphics.Transformation;
@@ -6,21 +6,26 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-public class Entity {
+public abstract class Entity {
 
     private final Mesh mesh;
 
+    protected final float mass;
+
     private final Transformation transformation = new Transformation();
 
-    private final Vector3f position = new Vector3f();
-    private float scale = 1f;
-    private final Vector3f rotation = new Vector3f();
+    protected final Vector3f position = new Vector3f();
+    protected float scale = 1f;
+    protected final Vector3f rotation = new Vector3f();
 
     private final Matrix4f model_view_mat = new Matrix4f();
 
-    public Entity(@NotNull Mesh mesh) {
+    public Entity(@NotNull Mesh mesh, float mass) {
         this.mesh = mesh;
+        this.mass = mass;
     }
+
+    public abstract void update();
 
     public Mesh getMesh() {
         return mesh;
@@ -36,6 +41,18 @@ public class Entity {
 
     public void move(float dx, float dy, float dz) {
         position.add(dx, dy, dz);
+    }
+
+    public void forward(float dr) {
+        position.add((float) Math.sin(Math.toRadians(rotation.y)) * dr, 0f, (float) Math.cos(Math.toRadians(rotation.y)) * dr);
+    }
+
+    public void drift(float dr) {
+        position.add((float) Math.cos(Math.toRadians(rotation.y)) * dr, 0f, (float) -Math.sin(Math.toRadians(rotation.y)) * dr);
+    }
+
+    public void rotate(float dt) {
+        rotation.add(0f, dt, 0f);
     }
 
     public float getScale() {

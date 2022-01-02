@@ -1,8 +1,8 @@
 package com.torpill.engine.graphics;
 
-import com.torpill.engine.world.Block;
+import com.torpill.engine.world.blocks.Block;
 import com.torpill.engine.world.Chunk;
-import com.torpill.engine.world.Entity;
+import com.torpill.engine.world.entities.Entity;
 import com.torpill.engine.Window;
 import com.torpill.engine.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +14,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Renderer {
 
-    private static final float FOV = (float) Math.toRadians(100.0f);
+    private static final float FOV = (float) Math.toRadians(80.0f);
 
     private static final float Z_NEAR = 0.01f;
     private static final float Z_FAR = 1000.f;
@@ -32,6 +32,7 @@ public class Renderer {
     private static final String UNI_AMBIENT_LIGHT = "ambient_light";
     private static final String UNI_SPECULAR_POWER = "specular_power";
     private static final String UNI_MATERIAL = "material";
+    private static final String UNI_SELECTED = "selected";
     private static final String UNI_POINT_LIGHT = "point_light";
     private static final String UNI_SPOT_LIGHT = "spot_light";
     private static final String UNI_DIRECTIONAL_LIGHT = "directional_light";
@@ -62,6 +63,7 @@ public class Renderer {
         main.createUniform(UNI_TEX_SAMPLER);
         main.createUniform(UNI_AMBIENT_LIGHT);
         main.createUniform(UNI_SPECULAR_POWER);
+        main.createUniform(UNI_SELECTED);
 
         main.createPointLightUniform(UNI_POINT_LIGHT);
         main.createSpotLightUniform(UNI_SPOT_LIGHT);
@@ -141,12 +143,13 @@ public class Renderer {
         Block.BLOCK_MESH.preRender(false);
     }
 
-    public void renderBlock(@NotNull Block block, @NotNull Vector3f position, @NotNull Matrix4f view_mat) {
+    public void renderBlock(@NotNull Block block, @NotNull Vector3f position, boolean selected, @NotNull Matrix4f view_mat) {
         curr_mesh = block.getMesh();
         curr_texture = curr_mesh.bindTextureWithTest(curr_texture);
         transformation.setModelView(position, view_mat, curr_mat);
         main.setUniform(UNI_MODEL_VIEW, curr_mat);
         main.setUniform(UNI_MATERIAL, curr_mesh.getMaterial());
+        main.setUniform(UNI_SELECTED, selected);
         curr_mesh.render();
     }
 
@@ -190,7 +193,7 @@ public class Renderer {
 
                         if (render) {
                             block_position.set(i + position.x, j, k + position.z);
-                            renderBlock(block, block_position, view_mat);
+                            renderBlock(block, block_position, world.isSelected(x0, j, z0), view_mat);
                         }
                     }
                 }

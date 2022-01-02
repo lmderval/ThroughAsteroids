@@ -36,7 +36,17 @@ public class PauseGui extends NuklearScene.Gui {
 
                 nk_layout_row_dynamic(ctx, 50, 1);
                 if (nk_button_label(ctx, "Resume")) {
-                    Main.getInstance().setPaused(false);
+                    Main.getInstance().resume();
+                }
+
+                nk_layout_row_dynamic(ctx, 50, 1);
+                if (nk_button_label(ctx, "Play")) {
+                    Main.getInstance().play(false);
+                }
+
+                nk_layout_row_dynamic(ctx, 50, 1);
+                if (nk_button_label(ctx, "Edit")) {
+                    Main.getInstance().edit(false);
                 }
 
                 nk_layout_row_dynamic(ctx, 50, 1);

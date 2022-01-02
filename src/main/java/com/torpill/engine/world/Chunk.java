@@ -1,5 +1,6 @@
 package com.torpill.engine.world;
 
+import com.torpill.engine.world.blocks.Block;
 import org.jetbrains.annotations.Nullable;
 
 public class Chunk {

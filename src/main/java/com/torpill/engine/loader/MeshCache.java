@@ -11,6 +11,13 @@ public class MeshCache {
 
     private static MeshCache INSTANCE;
 
+    public static Mesh SHIP;
+
+    public static void load() throws Exception {
+        SHIP = MeshCache.getInstance().getStaticMeshes("models/entities/ship.obj", "textures/entities")[0];
+        SHIP.getMaterial().setTexture(TextureCache.getInstance().getTexture("textures/entities/ship.png"));
+    }
+
     private final Map<String, Mesh[]> meshes_map = new HashMap<>();
 
     public static MeshCache getInstance() {

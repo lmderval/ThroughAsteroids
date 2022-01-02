@@ -3,7 +3,7 @@ package com.torpill.engine;
 import com.torpill.engine.gui.Nuklear;
 import com.torpill.engine.loader.MeshCache;
 import com.torpill.engine.loader.TextureCache;
-import com.torpill.engine.world.Block;
+import com.torpill.engine.world.blocks.Block;
 import org.jetbrains.annotations.NotNull;
 
 import static java.lang.Thread.sleep;
