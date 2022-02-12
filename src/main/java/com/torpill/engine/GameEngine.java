@@ -45,7 +45,7 @@ public class GameEngine {
         mouse_input.init(window, nk);
         keyboard_input.init(window, nk);
         Block.loadMesh();
-        game_logic.init();
+        game_logic.init(window);
     }
 
     private void loop() {

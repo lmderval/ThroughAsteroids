@@ -17,9 +17,10 @@ import static org.lwjgl.opengl.GL20C.glDeleteShader;
 import static org.lwjgl.opengl.GL20C.glDetachShader;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
-public class ShaderProgram {
+public abstract class ShaderProgram {
 
-    private final String name;
+    private final String vertexName;
+    private final String fragmentName;
 
     private final int program;
 
@@ -29,15 +30,22 @@ public class ShaderProgram {
     private final Map<String, Integer> uniforms = new HashMap<>();
 
     public ShaderProgram(@NotNull String name) throws Exception {
-        this.name = name;
+        this(name, name);
+    }
+
+    public ShaderProgram(@NotNull String vertexName, @NotNull String fragmentName) throws Exception {
+        this.vertexName = vertexName;
+        this.fragmentName = fragmentName;
         program = glCreateProgram();
         if (program == 0) {
             throw new Exception("Could not create Shader");
         }
     }
 
+    public abstract void setup() throws Exception;
+
     public void createVertexShader() throws Exception {
-        createVertexShader(Utils.loadSource("/shaders/" + name + "_vertex.glsl"));
+        createVertexShader(Utils.loadSource("/shaders/" + vertexName + "_vertex.glsl"));
     }
 
     public void createVertexShader(@NotNull String code) throws Exception {
@@ -45,7 +53,7 @@ public class ShaderProgram {
     }
 
     public void createFragmentShader() throws Exception {
-        createFragmentShader(Utils.loadSource("/shaders/" + name + "_fragment.glsl"));
+        createFragmentShader(Utils.loadSource("/shaders/" + fragmentName + "_fragment.glsl"));
     }
 
     public void createFragmentShader(@NotNull String code) throws Exception {

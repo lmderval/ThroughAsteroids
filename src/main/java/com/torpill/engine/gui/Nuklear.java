@@ -18,6 +18,8 @@ import java.nio.IntBuffer;
 import java.util.Objects;
 
 import static com.torpill.engine.Utils.ioResourceToByteBuffer;
+import static com.torpill.engine.gui.NuklearShader.UNI_PROJECTION;
+import static com.torpill.engine.gui.NuklearShader.UNI_TEX_SAMPLER;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.nuklear.Nuklear.*;
 import static org.lwjgl.opengl.GL11C.*;
@@ -42,9 +44,6 @@ public class Nuklear {
 
     private static final NkDrawVertexLayoutElement.Buffer VERTEX_LAYOUT;
 
-    private static final String UNI_PROJECTION = "projection_mat";
-    private static final String UNI_TEX_SAMPLER = "tex_sampler";
-
     static {
         ALLOCATOR = NkAllocator.create()
                 .alloc((handle, old, size) -> nmemAllocChecked(size))
@@ -65,7 +64,7 @@ public class Nuklear {
     private final NkDrawNullTexture null_texture = NkDrawNullTexture.create();
     private int width, height;
     private int display_width, display_height;
-    private ShaderProgram nuklear;
+    private NuklearShader nuklear;
 
     private int vbo, vao, ebo;
 
@@ -185,11 +184,11 @@ public class Nuklear {
 
     public void input(@NotNull Window window) {
 
-        width = window.getFramebufferWidth();
-        height = window.getFramebufferHeight();
+        width = Window.getFramebufferWidth();
+        height = Window.getFramebufferHeight();
 
-        display_width = window.getFramebufferWidth();
-        display_height = window.getFramebufferHeight();
+        display_width = Window.getFramebufferWidth();
+        display_height = Window.getFramebufferHeight();
 
         nk_input_begin(ctx);
         glfwPollEvents();
@@ -236,13 +235,8 @@ public class Nuklear {
 
     public @NotNull NkContext setupContext() throws Exception {
         nk_buffer_init(cmds, ALLOCATOR, BUFFER_INITIAL_SIZE);
-        nuklear = new ShaderProgram("nuklear");
-        nuklear.createVertexShader();
-        nuklear.createFragmentShader();
-        nuklear.link();
-
-        nuklear.createUniform(UNI_PROJECTION);
-        nuklear.createUniform(UNI_TEX_SAMPLER);
+        nuklear = new NuklearShader();
+        nuklear.setup();
 
         {
             // buffer setup

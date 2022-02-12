@@ -1,5 +1,6 @@
 package com.torpill.engine.graphics;
 
+import com.torpill.engine.graphics.main.MainShader;
 import com.torpill.engine.world.blocks.Block;
 import com.torpill.engine.world.Chunk;
 import com.torpill.engine.world.entities.Entity;
@@ -10,6 +11,7 @@ import org.joml.*;
 
 import java.lang.Math;
 
+import static com.torpill.engine.graphics.main.MainShader.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Renderer {
@@ -22,23 +24,7 @@ public class Renderer {
     private static final int RENDER_DISTANCE = 3;
     private static final int RENDER_DISTANCE_SQUARED = RENDER_DISTANCE * RENDER_DISTANCE;
 
-    private static final float SPECULAR_POWER = 10f;
-
-    private static final Vector4f DEBUG_COLOR = new Vector4f(1f);
-
-    private static final String UNI_PROJECTION = "projection_mat";
-    private static final String UNI_MODEL_VIEW = "mv_mat";
-    private static final String UNI_TEX_SAMPLER = "tex_sampler";
-    private static final String UNI_AMBIENT_LIGHT = "ambient_light";
-    private static final String UNI_SPECULAR_POWER = "specular_power";
-    private static final String UNI_MATERIAL = "material";
-    private static final String UNI_SELECTED = "selected";
-    private static final String UNI_POINT_LIGHT = "point_light";
-    private static final String UNI_SPOT_LIGHT = "spot_light";
-    private static final String UNI_DIRECTIONAL_LIGHT = "directional_light";
-    private static final String UNI_DEBUG_COLOR = "debug_color";
-
-    private ShaderProgram main;
+    private MainShader main;
 
     private final Transformation transformation = new Transformation();
 
@@ -53,25 +39,8 @@ public class Renderer {
     }
 
     private void setupMain() throws Exception {
-        main = new ShaderProgram("main");
-        main.createVertexShader();
-        main.createFragmentShader();
-        main.link();
-
-        main.createUniform(UNI_PROJECTION);
-        main.createUniform(UNI_MODEL_VIEW);
-        main.createUniform(UNI_TEX_SAMPLER);
-        main.createUniform(UNI_AMBIENT_LIGHT);
-        main.createUniform(UNI_SPECULAR_POWER);
-        main.createUniform(UNI_SELECTED);
-
-        main.createPointLightUniform(UNI_POINT_LIGHT);
-        main.createSpotLightUniform(UNI_SPOT_LIGHT);
-        main.createDirectionalLightUniform(UNI_DIRECTIONAL_LIGHT);
-
-        main.createMaterialUniform(UNI_MATERIAL);
-
-        main.createUniform(UNI_DEBUG_COLOR);
+        main = new MainShader();
+        main.setup();
     }
 
     public void clear() {
@@ -81,11 +50,11 @@ public class Renderer {
     public void preRender(@NotNull Window window, @NotNull Camera camera, @NotNull Vector3f ambient_light, @NotNull PointLight point_light, @NotNull SpotLight spot_light, @NotNull DirectionalLight directional_light) {
         clear();
         if (window.isResized()) {
-            glViewport(0, 0, window.getFramebufferWidth(), window.getFramebufferHeight());
+            glViewport(0, 0, Window.getFramebufferWidth(), Window.getFramebufferHeight());
             window.setResized(false);
         }
 
-        transformation.setPerspective(FOV, window.getFramebufferWidth(), window.getFramebufferHeight(), Z_NEAR, Z_FAR, perspective_mat);
+        transformation.setPerspective(FOV, Window.getFramebufferWidth(), Window.getFramebufferHeight(), Z_NEAR, Z_FAR, perspective_mat);
 
         main.bind();
 

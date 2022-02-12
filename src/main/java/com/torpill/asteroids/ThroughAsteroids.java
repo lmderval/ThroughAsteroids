@@ -6,6 +6,8 @@ import com.torpill.engine.KeyboardInput;
 import com.torpill.engine.MouseInput;
 import com.torpill.engine.Window;
 import com.torpill.engine.graphics.*;
+import com.torpill.engine.graphics.post.FBO;
+import com.torpill.engine.graphics.post.PostProcessing;
 import com.torpill.engine.gui.Nuklear;
 import com.torpill.engine.gui.NuklearScene;
 import com.torpill.engine.loader.MeshCache;
@@ -18,6 +20,7 @@ import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 import static com.torpill.asteroids.GameState.*;
+import static com.torpill.engine.graphics.post.FBO.DEPTH_RENDER_BUFFER;
 import static java.lang.Float.POSITIVE_INFINITY;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -25,18 +28,24 @@ public class ThroughAsteroids implements IGameLogic {
 
     private static final float CAMERA_POS_STEP = 0.6f;
     private static final float MOUSE_SENSITIVITY = 0.2f;
+
     private final Renderer renderer = new Renderer();
     private final Camera camera = new Camera();
+    private FBO fbo;
+
     private final Vector3f ambient_light = new Vector3f(0.1f);
     private final PointLight.Attenuation att = new PointLight.Attenuation(0f, 0.1f, 0.5f);
     private final PointLight point_light = new PointLight(new Vector3f(1f), new Vector3f(10f, 9f, 8f), 0.7f, att);
     private final PointLight spot_point_light = new PointLight(new Vector3f(1f), new Vector3f(10f, 9f, 8f), 1.25f, att);
     private final SpotLight spot_light = new SpotLight(new Vector3f(0f, 0f, -1f), 20f, spot_point_light);
     private final DirectionalLight directional_light = new DirectionalLight(new Vector3f(1f, 0.9f, 0.75f), new Vector3f(-1f, -1f, -1f), 0.8f);
+
     private final Vector3i direction = new Vector3i();
     private final Vector2f rotation = new Vector2f();
     private final Vector3i playerDirection = new Vector3i();
+
     private final NuklearScene nkPause = new NkPauseScene();
+
     public GameState gameState = MENU;
     public GameState lastGameState = MENU;
     private World world;
@@ -45,8 +54,10 @@ public class ThroughAsteroids implements IGameLogic {
     private int rollTick = 0;
 
     @Override
-    public void init() throws Exception {
+    public void init(@NotNull Window window) throws Exception {
         renderer.init();
+        fbo = new FBO(Window.getWidth(), Window.getHeight(), DEPTH_RENDER_BUFFER);
+        PostProcessing.init();
 
         Blocks.load();
         MeshCache.load();
@@ -167,14 +178,19 @@ public class ThroughAsteroids implements IGameLogic {
         }
         if (gameState != MENU) {
             // World rendering
+            fbo.bindFrameBuffer();
             renderer.preRender(window, camera, ambient_light, point_light, spot_light, directional_light);
             renderer.renderWorld(world, camera);
             renderer.postRender();
+            fbo.unbindFrameBuffer();
+            PostProcessing.doPostProcessing(fbo.getColourTexture());
         }
     }
 
     @Override
     public void cleanup() {
+        PostProcessing.cleanup();
+        fbo.cleanup();
         renderer.cleanup();
     }
 

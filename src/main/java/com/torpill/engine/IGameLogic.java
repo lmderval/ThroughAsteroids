@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface IGameLogic {
 
-    void init() throws Exception;
+    void init(@NotNull Window window) throws Exception;
 
     void input(@NotNull Window window, @NotNull MouseInput mouse_input, @NotNull KeyboardInput keyboard_input);
 
