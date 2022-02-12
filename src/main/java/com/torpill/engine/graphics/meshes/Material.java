@@ -1,4 +1,4 @@
-package com.torpill.engine.graphics;
+package com.torpill.engine.graphics.meshes;
 
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector4f;

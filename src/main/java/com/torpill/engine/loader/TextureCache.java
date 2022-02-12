@@ -1,6 +1,6 @@
 package com.torpill.engine.loader;
 
-import com.torpill.engine.graphics.Texture;
+import com.torpill.engine.graphics.meshes.Texture;
 
 import java.util.HashMap;
 import java.util.Map;

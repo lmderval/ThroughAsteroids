@@ -1,6 +1,6 @@
 package com.torpill.engine.loader;
 
-import com.torpill.engine.graphics.Mesh;
+import com.torpill.engine.graphics.meshes.Mesh;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

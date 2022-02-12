@@ -1,6 +1,6 @@
-package com.torpill.engine.graphics.post;
+package com.torpill.engine.graphics.shaders.contrast;
 
-import com.torpill.engine.graphics.ShaderProgram;
+import com.torpill.engine.graphics.shaders.ShaderProgram;
 
 public class ContrastShader extends ShaderProgram {
 

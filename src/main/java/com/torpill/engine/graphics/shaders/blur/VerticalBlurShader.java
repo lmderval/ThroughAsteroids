@@ -1,6 +1,6 @@
-package com.torpill.engine.graphics.blur;
+package com.torpill.engine.graphics.shaders.blur;
 
-import com.torpill.engine.graphics.ShaderProgram;
+import com.torpill.engine.graphics.shaders.ShaderProgram;
 
 public class VerticalBlurShader extends ShaderProgram {
 

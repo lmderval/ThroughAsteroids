@@ -1,6 +1,6 @@
 package com.torpill.engine.loader;
 
-import com.torpill.engine.graphics.Mesh2D;
+import com.torpill.engine.graphics.meshes.Mesh2D;
 
 public class RawLoader {
 

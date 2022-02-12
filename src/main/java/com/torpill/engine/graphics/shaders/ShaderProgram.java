@@ -1,6 +1,10 @@
-package com.torpill.engine.graphics;
+package com.torpill.engine.graphics.shaders;
 
 import com.torpill.engine.Utils;
+import com.torpill.engine.graphics.lights.DirectionalLight;
+import com.torpill.engine.graphics.meshes.Material;
+import com.torpill.engine.graphics.lights.PointLight;
+import com.torpill.engine.graphics.lights.SpotLight;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;

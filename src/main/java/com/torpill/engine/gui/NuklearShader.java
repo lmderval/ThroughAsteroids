@@ -1,7 +1,6 @@
 package com.torpill.engine.gui;
 
-import com.torpill.engine.graphics.ShaderProgram;
-import org.jetbrains.annotations.NotNull;
+import com.torpill.engine.graphics.shaders.ShaderProgram;
 
 public class NuklearShader extends ShaderProgram {
 

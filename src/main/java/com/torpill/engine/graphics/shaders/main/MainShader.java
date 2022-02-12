@@ -1,7 +1,6 @@
-package com.torpill.engine.graphics.main;
+package com.torpill.engine.graphics.shaders.main;
 
-import com.torpill.engine.graphics.ShaderProgram;
-import org.jetbrains.annotations.NotNull;
+import com.torpill.engine.graphics.shaders.ShaderProgram;
 import org.joml.Vector4f;
 
 public class MainShader extends ShaderProgram {

@@ -1,6 +1,11 @@
 package com.torpill.engine.graphics;
 
-import com.torpill.engine.graphics.main.MainShader;
+import com.torpill.engine.graphics.lights.DirectionalLight;
+import com.torpill.engine.graphics.lights.PointLight;
+import com.torpill.engine.graphics.lights.SpotLight;
+import com.torpill.engine.graphics.meshes.Mesh;
+import com.torpill.engine.graphics.meshes.Texture;
+import com.torpill.engine.graphics.shaders.main.MainShader;
 import com.torpill.engine.world.blocks.Block;
 import com.torpill.engine.world.Chunk;
 import com.torpill.engine.world.entities.Entity;
@@ -11,7 +16,7 @@ import org.joml.*;
 
 import java.lang.Math;
 
-import static com.torpill.engine.graphics.main.MainShader.*;
+import static com.torpill.engine.graphics.shaders.main.MainShader.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Renderer {

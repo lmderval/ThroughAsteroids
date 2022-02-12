@@ -1,6 +1,6 @@
 package com.torpill.engine.world.entities;
 
-import com.torpill.engine.graphics.Mesh;
+import com.torpill.engine.graphics.meshes.Mesh;
 import com.torpill.engine.graphics.Transformation;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;

@@ -9,13 +9,13 @@ import static java.lang.Math.PI;
 
 public class EntityPlayer extends Entity {
 
-    private Vector3f acc = new Vector3f();
-    private Vector3f speed = new Vector3f();
+    private final Vector3f acc = new Vector3f();
+    private final Vector3f speed = new Vector3f();
 
     private float roll_speed = 0f;
     private float roll_acc = 0f;
 
-    private Vector3f force = new Vector3f();
+    private final Vector3f force = new Vector3f();
 
     public EntityPlayer() {
         super(SHIP, 800f);
@@ -31,7 +31,6 @@ public class EntityPlayer extends Entity {
 
     @Override
     public void update() {
-
         float roll = (float) Math.toRadians(roll_speed);
         while (roll > PI) roll -= PI * 2f;
         roll_speed += roll_acc;

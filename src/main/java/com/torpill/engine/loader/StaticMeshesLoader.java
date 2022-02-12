@@ -1,9 +1,9 @@
 package com.torpill.engine.loader;
 
 import com.torpill.engine.Utils;
-import com.torpill.engine.graphics.Material;
-import com.torpill.engine.graphics.Mesh;
-import com.torpill.engine.graphics.Texture;
+import com.torpill.engine.graphics.meshes.Material;
+import com.torpill.engine.graphics.meshes.Mesh;
+import com.torpill.engine.graphics.meshes.Texture;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector4f;

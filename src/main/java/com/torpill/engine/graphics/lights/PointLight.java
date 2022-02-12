@@ -1,4 +1,4 @@
-package com.torpill.engine.graphics;
+package com.torpill.engine.graphics.lights;
 
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;

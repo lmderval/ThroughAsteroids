@@ -1,4 +1,4 @@
-package com.torpill.engine.graphics;
+package com.torpill.engine.graphics.meshes;
 
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL15;

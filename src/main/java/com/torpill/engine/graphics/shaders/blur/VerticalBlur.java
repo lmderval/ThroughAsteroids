@@ -1,11 +1,9 @@
-package com.torpill.engine.graphics.blur;
+package com.torpill.engine.graphics.shaders.blur;
 
 import com.torpill.engine.graphics.post.ImageRenderer;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 
-import static com.torpill.engine.graphics.blur.VerticalBlurShader.UNI_TARGET_HEIGHT;
-import static com.torpill.engine.graphics.main.MainShader.UNI_TEX_SAMPLER;
+import static com.torpill.engine.graphics.shaders.blur.VerticalBlurShader.UNI_TARGET_HEIGHT;
+import static com.torpill.engine.graphics.shaders.main.MainShader.UNI_TEX_SAMPLER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;

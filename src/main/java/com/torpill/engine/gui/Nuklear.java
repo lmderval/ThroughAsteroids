@@ -1,7 +1,6 @@
 package com.torpill.engine.gui;
 
 import com.torpill.engine.Window;
-import com.torpill.engine.graphics.ShaderProgram;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.lwjgl.nuklear.*;
