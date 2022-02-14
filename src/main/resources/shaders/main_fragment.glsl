@@ -39,9 +39,11 @@ struct Material {
     float reflectance;
     float emissivity;
     bool is_textured;
+    bool has_light_map;
 };
 
 uniform sampler2D tex_sampler;
+uniform sampler2D light_map_sampler;
 uniform vec3 ambient_light;
 uniform float specular_power;
 uniform int selected;
@@ -78,9 +80,12 @@ vec4 calcLightColor(vec3 light_color, float light_intensity, vec3 position, vec3
     vec3 reflected = normalize(reflect(from_light, normal));
     vec3 to_camera = normalize(-position);
     float specular_factor = max(0.0, dot(to_camera, reflected));
-    vec4 specular = specular_color * vec4(light_color, 1.0) * pow(specular_factor, specular_power) * light_intensity * material.reflectance;
-
-    return diffuse + specular;
+    vec4 specular = specular_color * vec4(light_color, 1.0) * pow(specular_factor, specular_power) * light_intensity;
+    if (material.has_light_map) {
+        return diffuse + specular * texture(light_map_sampler, frag_textures).b;
+    } else {
+        return diffuse + specular * material.reflectance;
+    }
 }
 
 vec4 calcPointLight(PointLight light, vec3 position, vec3 normal) {
@@ -115,7 +120,12 @@ void main() {
     vec4 diffuse_specular_color = calcDirectionalLight(directional_light, mv_pos, mv_normal);
     diffuse_specular_color += calcPointLight(point_light, mv_pos, mv_normal);
     diffuse_specular_color += calcSpotLight(spot_light, mv_pos, mv_normal);
-    out_color = emissive_color * material.emissivity + ambient_color * vec4(ambient_light, 1.0) + diffuse_specular_color;
+    out_color = ambient_color * vec4(ambient_light, 1.0) + diffuse_specular_color;
+    if (material.has_light_map) {
+        out_color += emissive_color * texture(light_map_sampler, frag_textures).r;
+    } else {
+        out_color += emissive_color * material.emissivity;
+    }
     out_color *= debug_color;
     if (selected == 1) {
         out_color *= vec4(0.5, 0.5, 0.5, 1.0);

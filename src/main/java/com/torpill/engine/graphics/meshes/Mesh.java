@@ -94,18 +94,36 @@ public class Mesh {
 
     public Texture bindTextureWithTest(Texture texture) {
         if (material != null) {
-            Texture material_texture = material.getTexture();
-            if (material_texture != null && (material_texture != texture)) {
+            Texture materialTexture = material.getTexture();
+            if (materialTexture != null && (materialTexture != texture)) {
                 bindTexture();
-                texture = material_texture;
+                texture = materialTexture;
             }
         }
         return texture;
     }
 
+    public void bindLightMap() {
+        assert material.getLightMap() != null;
+        glActiveTexture(GL_TEXTURE1);
+        material.getLightMap().bind();
+    }
+
+    public Texture bindLightMapWithTest(Texture lightMap) {
+        if (material != null) {
+            Texture materialLightMap = material.getLightMap();
+            if (materialLightMap != null && (materialLightMap != lightMap)) {
+                bindLightMap();
+                lightMap = materialLightMap;
+            }
+        }
+        return lightMap;
+    }
+
     public void preRender(boolean bind_texture) {
         if (bind_texture) {
-            bindTexture();
+            if (material.isTextured()) bindTexture();
+            if (material.hasLightMap()) bindLightMap();
         }
 
         glBindVertexArray(vao);

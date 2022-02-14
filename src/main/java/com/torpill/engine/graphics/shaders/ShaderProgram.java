@@ -147,6 +147,7 @@ public abstract class ShaderProgram {
         createUniform(uniformName + ".reflectance");
         createUniform(uniformName + ".emissivity");
         createUniform(uniformName + ".is_textured");
+        createUniform(uniformName + ".has_light_map");
     }
 
     public void setUniform(@NotNull String uniform, @NotNull Matrix4f value) {
@@ -207,6 +208,7 @@ public abstract class ShaderProgram {
         setUniform(uniform + ".reflectance", material.getReflectance());
         setUniform(uniform + ".emissivity", material.getEmissivity());
         setUniform(uniform + ".is_textured", material.isTextured());
+        setUniform(uniform + ".has_light_map", material.hasLightMap());
     }
 
     public void cleanup() {

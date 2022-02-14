@@ -15,6 +15,7 @@ public class Material {
     private float emissivity;
 
     private @Nullable Texture texture;
+    private @Nullable Texture lightMap;
 
     public Material() {
         this(DEFAULT_COLOR, DEFAULT_COLOR, DEFAULT_COLOR, DEFAULT_COLOR, 1f, 0f);
@@ -73,7 +74,19 @@ public class Material {
         return texture;
     }
 
+    public @Nullable Texture getLightMap() {
+        return lightMap;
+    }
+
+    public void setLightMap(@Nullable Texture lightMap) {
+        this.lightMap = lightMap;
+    }
+
     public boolean isTextured() {
         return texture != null;
+    }
+
+    public boolean hasLightMap() {
+        return lightMap != null;
     }
 }

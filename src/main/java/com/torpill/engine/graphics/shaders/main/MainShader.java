@@ -12,6 +12,7 @@ public class MainShader extends ShaderProgram {
     public static final String UNI_PROJECTION = "projection_mat";
     public static final String UNI_MODEL_VIEW = "mv_mat";
     public static final String UNI_TEX_SAMPLER = "tex_sampler";
+    public static final String UNI_LIGHT_MAP_SAMPLER = "light_map_sampler";
     public static final String UNI_AMBIENT_LIGHT = "ambient_light";
     public static final String UNI_SPECULAR_POWER = "specular_power";
     public static final String UNI_MATERIAL = "material";
@@ -34,6 +35,7 @@ public class MainShader extends ShaderProgram {
         createUniform(UNI_PROJECTION);
         createUniform(UNI_MODEL_VIEW);
         createUniform(UNI_TEX_SAMPLER);
+        createUniform(UNI_LIGHT_MAP_SAMPLER);
         createUniform(UNI_AMBIENT_LIGHT);
         createUniform(UNI_SPECULAR_POWER);
         createUniform(UNI_SELECTED);

@@ -35,7 +35,7 @@ public class EntityPlayer extends Entity {
         while (roll > PI) roll -= PI * 2f;
         roll_speed += roll_acc;
         while (roll_speed > 360f) roll_speed -= 360f;
-        roll_acc = 25f * 1.6f / scale * (float) Math.sin(roll * 2f + PI) - 1.0f / mass * roll_speed;
+        roll_acc = 25f * 1.6f / 2.0f * (float) Math.sin(roll * 2f + PI) - 1.0f / mass * roll_speed;
         rotation.z = (float) Math.toDegrees(roll);
 
         Vector3f friction = new Vector3f(speed).mul(-25f);

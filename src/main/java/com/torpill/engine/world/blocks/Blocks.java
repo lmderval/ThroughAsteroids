@@ -5,16 +5,33 @@ import com.torpill.engine.loader.TextureCache;
 
 public class Blocks {
 
-    public static Block GRASS;
-    public static Block DIRT;
+    public static Block WALL;
+    public static Block WALL_BRICK;
+    public static Block WALL_DUST;
+    public static Block WALL_EDGE;
+    public static Block WALL_ORE;
 
     public static void load() throws Exception {
-        Material grass_material = new Material();
-        grass_material.setTexture(TextureCache.getInstance().getTexture("textures/blocks/grass.png"));
-        GRASS = new Block(grass_material);
+        Material wallMat = new Material(0.0f);
+        wallMat.setTexture(TextureCache.getInstance().getTexture("textures/blocks/wall.png"));
+        WALL = new Block(wallMat);
 
-        Material dirt_material = new Material();
-        dirt_material.setTexture(TextureCache.getInstance().getTexture("textures/blocks/dirt.png"));
-        DIRT = new Block(dirt_material);
+        Material wallBrickMat = new Material(0.0f);
+        wallBrickMat.setTexture(TextureCache.getInstance().getTexture("textures/blocks/wall_brick.png"));
+        wallBrickMat.setLightMap(TextureCache.getInstance().getTexture("textures/lights/blocks/wall_brick.png"));
+        WALL_BRICK = new Block(wallBrickMat);
+
+        Material wallDustMat = new Material(0.0f);
+        wallDustMat.setTexture(TextureCache.getInstance().getTexture("textures/blocks/wall_dust.png"));
+        WALL_DUST = new Block(wallDustMat);
+
+        Material wallEdgeMat = new Material(0.0f);
+        wallEdgeMat.setTexture(TextureCache.getInstance().getTexture("textures/blocks/wall_edge.png"));
+        WALL_EDGE = new Block(wallEdgeMat);
+
+        Material wallOreMat = new Material(0.0f);
+        wallOreMat.setTexture(TextureCache.getInstance().getTexture("textures/blocks/wall_ore.png"));
+        wallOreMat.setLightMap(TextureCache.getInstance().getTexture("textures/lights/blocks/wall_ore.png"));
+        WALL_ORE = new Block(wallOreMat);
     }
 }

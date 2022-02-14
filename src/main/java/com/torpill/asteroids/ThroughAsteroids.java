@@ -36,12 +36,15 @@ public class ThroughAsteroids implements IGameLogic {
     private final Camera camera = new Camera();
     private FBO fbo;
 
-    private final Vector3f ambient_light = new Vector3f(0.1f);
-    private final PointLight.Attenuation att = new PointLight.Attenuation(0f, 0.1f, 0.5f);
-    private final PointLight point_light = new PointLight(new Vector3f(1f), new Vector3f(10f, 9f, 8f), 0.7f, att);
-    private final PointLight spot_point_light = new PointLight(new Vector3f(1f), new Vector3f(10f, 9f, 8f), 1.25f, att);
-    private final SpotLight spot_light = new SpotLight(new Vector3f(0f, 0f, -1f), 20f, spot_point_light);
-    private final DirectionalLight directional_light = new DirectionalLight(new Vector3f(1f, 0.9f, 0.75f), new Vector3f(-1f, -1f, -1f), 0.8f);
+    private final Vector3f ambient_light = new Vector3f(0.35f);
+//    private final PointLight.Attenuation att = new PointLight.Attenuation(0f, 0.1f, 0.5f);
+//    private final PointLight point_light = new PointLight(new Vector3f(1f), new Vector3f(10f, 9f, 8f), 0.7f, att);
+    private final PointLight point_light = PointLight.NULL;
+//    private final PointLight spot_point_light = new PointLight(new Vector3f(1f), new Vector3f(10f, 9f, 8f), 1.25f, att);
+//    private final SpotLight spot_light = new SpotLight(new Vector3f(0f, 0f, -1f), 20f, spot_point_light);
+    private final SpotLight spot_light = SpotLight.NULL;
+    private final DirectionalLight directional_light = new DirectionalLight(new Vector3f(1f, 0.9f, 0.75f), new Vector3f(0f, -1f, 1f), 0.45f);
+//    private final DirectionalLight directional_light = DirectionalLight.NULL;
 
     private final Vector3i direction = new Vector3i();
     private final Vector2f rotation = new Vector2f();
@@ -176,6 +179,7 @@ public class ThroughAsteroids implements IGameLogic {
 
     @Override
     public void render(@NotNull Window window) {
+        window.setClearColor(15, 15, 19, 255);
         {
             // Nuklear rendering
         }
@@ -239,33 +243,129 @@ public class ThroughAsteroids implements IGameLogic {
     private void loadWorld() {
 
         world = new World(64, 16, 64, 16, 16);
-        for (int i = 0; i < world.getChunkWidth() * world.getWidth(); i++) {
-            for (int j = 0; j < 4; j++) {
-                for (int k = 0; k < world.getChunkDepth() * world.getDepth(); k++) {
-                    world.setBlock(i, j, k, (i + k) % 2 < 1 ? Blocks.DIRT : Blocks.GRASS);
-                }
-            }
-        }
-        world.setBlock(10, 4, 0, Blocks.GRASS);
-        for (int i = 0; i < 9; i++) {
-            for (int k = 0; k < 7; k++) {
-                world.setBlock(16 + i, 3, 23 + k, null);
+        for (int i = 0; i < 32; i ++) {
+            for (int j = 0; j < 18; j ++) {
+                world.setBlock(i, 0, j, Blocks.WALL);
             }
         }
 
-        for (int i = 0; i < 11; i++) {
-            for (int j = 0; j < 11; j++) {
-                if ((i - 5f) * (i - 5f) + (j - 5f) * (j - 5f) < 17) {
-                    world.setBlock(5 + i, j + 4, 5, Blocks.DIRT);
-                }
+        for (int i = 0; i < 18; i ++) {
+            for (int j = 9; j < 14; j ++) {
+                world.setBlock(i, 0, j, null);
             }
         }
 
-        world.getPlayer().setPosition(16f, 4.7f, 1f);
-        world.getPlayer().setScale(2.0f);
+        for (int i = 18; i < 23; i ++) {
+            for (int j = 9; j < 13; j ++) {
+                world.setBlock(i, 0, j, null);
+            }
+        }
 
-        camera.setPosition(10f, 9f, 12f);
-        camera.setRotation(0f, 0f, 0f);
+        for (int i = 23; i < 32; i ++) {
+            for (int j = 10; j < 13; j ++) {
+                world.setBlock(i, 0, j, null);
+            }
+        }
+
+        world.setBlock(24, 0, 1, Blocks.WALL_BRICK);
+        for (int i = 25; i < 28; i ++) {
+            for (int j = 0; j < 2; j ++) {
+                world.setBlock(i, 0, j, Blocks.WALL_BRICK);
+            }
+        }
+        world.setBlock(28, 0, 0, Blocks.WALL_BRICK);
+
+        for (int i = 12; i < 16; i ++) {
+            for (int j = 5; j < 7; j ++) {
+                world.setBlock(i, 0, j, Blocks.WALL_BRICK);
+            }
+        }
+
+        for (int i = 0; i < 2; i ++) {
+            for (int j = 15; j < 18; j ++) {
+                world.setBlock(i, 0, j, Blocks.WALL_BRICK);
+            }
+        }
+        world.setBlock(2, 0, 17, Blocks.WALL_BRICK);
+
+        for (int i = 18; i < 22; i ++) {
+            for (int j = 16; j < 18; j ++) {
+                world.setBlock(i, 0, j, Blocks.WALL_BRICK);
+            }
+        }
+
+        world.setBlock(31, 0, 7, Blocks.WALL_BRICK);
+        world.setBlock(31, 0, 8, Blocks.WALL_BRICK);
+
+        for (int i = 3; i < 6; i ++) {
+            world.setBlock(i, 0, 1, Blocks.WALL_ORE);
+        }
+        world.setBlock(4, 0, 2, Blocks.WALL_ORE);
+
+        for (int i = 4; i < 7; i ++) {
+            world.setBlock(20, 0, i, Blocks.WALL_ORE);
+        }
+        world.setBlock(21, 0, 5, Blocks.WALL_ORE);
+
+        for (int i = 27; i < 30; i ++) {
+            world.setBlock(i, 0, 16, Blocks.WALL_ORE);
+        }
+        world.setBlock(28, 0, 15, Blocks.WALL_ORE);
+
+        world.setBlock(1, 0, 8, Blocks.WALL_DUST);
+        world.setBlock(2, 0, 8, Blocks.WALL_DUST);
+        world.setBlock(4, 0, 8, Blocks.WALL_EDGE);
+        world.setBlock(5, 0, 8, Blocks.WALL_DUST);
+        world.setBlock(6, 0, 8, Blocks.WALL_EDGE);
+        world.setBlock(7, 0, 8, Blocks.WALL_EDGE);
+        world.setBlock(8, 0, 8, Blocks.WALL_EDGE);
+        world.setBlock(11, 0, 8, Blocks.WALL_EDGE);
+        world.setBlock(13, 0, 8, Blocks.WALL_EDGE);
+        world.setBlock(14, 0, 8, Blocks.WALL_EDGE);
+        world.setBlock(16, 0, 8, Blocks.WALL_DUST);
+        world.setBlock(18, 0, 8, Blocks.WALL_EDGE);
+        world.setBlock(19, 0, 8, Blocks.WALL_EDGE);
+        world.setBlock(21, 0, 8, Blocks.WALL_EDGE);
+        world.setBlock(22, 0, 8, Blocks.WALL_DUST);
+        world.setBlock(23, 0, 8, Blocks.WALL_DUST);
+        world.setBlock(23, 0, 9, Blocks.WALL_EDGE);
+        world.setBlock(24, 0, 9, Blocks.WALL_EDGE);
+        world.setBlock(26, 0, 9, Blocks.WALL_DUST);
+        world.setBlock(27, 0, 9, Blocks.WALL_EDGE);
+        world.setBlock(28, 0, 9, Blocks.WALL_EDGE);
+        world.setBlock(29, 0, 9, Blocks.WALL_DUST);
+
+        world.setBlock(0, 0, 14, Blocks.WALL_EDGE);
+        world.setBlock(2, 0, 14, Blocks.WALL_DUST);
+        world.setBlock(3, 0, 14, Blocks.WALL_EDGE);
+        world.setBlock(4, 0, 14, Blocks.WALL_EDGE);
+        world.setBlock(5, 0, 14, Blocks.WALL_EDGE);
+        world.setBlock(8, 0, 14, Blocks.WALL_EDGE);
+        world.setBlock(9, 0, 14, Blocks.WALL_DUST);
+        world.setBlock(10, 0, 14, Blocks.WALL_EDGE);
+        world.setBlock(11, 0, 14, Blocks.WALL_EDGE);
+        world.setBlock(13, 0, 14, Blocks.WALL_EDGE);
+        world.setBlock(15, 0, 14, Blocks.WALL_DUST);
+        world.setBlock(16, 0, 14, Blocks.WALL_DUST);
+        world.setBlock(17, 0, 14, Blocks.WALL_EDGE);
+        world.setBlock(18, 0, 14, Blocks.WALL_EDGE);
+        world.setBlock(18, 0, 13, Blocks.WALL_EDGE);
+        world.setBlock(19, 0, 13, Blocks.WALL_EDGE);
+        world.setBlock(22, 0, 13, Blocks.WALL_EDGE);
+        world.setBlock(23, 0, 14, Blocks.WALL_DUST);
+        world.setBlock(25, 0, 13, Blocks.WALL_EDGE);
+        world.setBlock(26, 0, 13, Blocks.WALL_EDGE);
+        world.setBlock(27, 0, 13, Blocks.WALL_EDGE);
+        world.setBlock(28, 0, 13, Blocks.WALL_EDGE);
+        world.setBlock(29, 0, 14, Blocks.WALL_DUST);
+        world.setBlock(30, 0, 14, Blocks.WALL_DUST);
+        world.setBlock(31, 0, 13, Blocks.WALL_EDGE);
+
+        world.getPlayer().setPosition(2f, -0.3f, 11f);
+        world.getPlayer().setRotation(0f, 90f, 0f);
+
+        camera.setPosition(15.5f, 12f, 12f);
+        camera.setRotation(80f, 0f, 0f);
         camera.updateViewMat();
     }
 

@@ -17,6 +17,7 @@ import org.joml.*;
 import java.lang.Math;
 
 import static com.torpill.engine.graphics.shaders.main.MainShader.*;
+import static com.torpill.engine.world.blocks.Block.BLOCK_MESH;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Renderer {
@@ -37,6 +38,7 @@ public class Renderer {
 
     private Mesh curr_mesh;
     private Texture curr_texture;
+    private Texture curr_light_map;
     private final Matrix4f curr_mat = new Matrix4f();
 
     public void init() throws Exception {
@@ -65,6 +67,7 @@ public class Renderer {
 
         main.setUniform(UNI_PROJECTION, perspective_mat);
         main.setUniform(UNI_TEX_SAMPLER, 0);
+        main.setUniform(UNI_LIGHT_MAP_SAMPLER, 1);
         main.setUniform(UNI_AMBIENT_LIGHT, ambient_light);
         main.setUniform(UNI_SPECULAR_POWER, SPECULAR_POWER);
         main.setUniform(UNI_DEBUG_COLOR, DEBUG_COLOR);
@@ -114,12 +117,13 @@ public class Renderer {
     }
 
     private void preRenderBlocks() {
-        Block.BLOCK_MESH.preRender(false);
+        BLOCK_MESH.preRender(false);
     }
 
     public void renderBlock(@NotNull Block block, @NotNull Vector3f position, boolean selected, @NotNull Matrix4f view_mat) {
         curr_mesh = block.getMesh();
         curr_texture = curr_mesh.bindTextureWithTest(curr_texture);
+        curr_light_map = curr_mesh.bindLightMapWithTest(curr_light_map);
         transformation.setModelView(position, view_mat, curr_mat);
         main.setUniform(UNI_MODEL_VIEW, curr_mat);
         main.setUniform(UNI_MATERIAL, curr_mesh.getMaterial());
@@ -128,9 +132,10 @@ public class Renderer {
     }
 
     private void postRenderBlocks() {
-        Block.BLOCK_MESH.postRender();
+        BLOCK_MESH.postRender();
         curr_mesh = null;
         curr_texture = null;
+        curr_light_map = null;
     }
 
     public void renderChunk(@NotNull Chunk chunk, @NotNull World world, @NotNull Vector3i position, @NotNull Matrix4f view_mat) {

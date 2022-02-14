@@ -16,6 +16,7 @@ public class MeshCache {
     public static void load() throws Exception {
         SHIP = MeshCache.getInstance().getStaticMeshes("models/entities/ship.obj", "textures/entities")[0];
         SHIP.getMaterial().setTexture(TextureCache.getInstance().getTexture("textures/entities/ship.png"));
+        SHIP.getMaterial().setLightMap(TextureCache.getInstance().getTexture("textures/lights/entities/ship.png"));
     }
 
     private final Map<String, Mesh[]> meshes_map = new HashMap<>();
