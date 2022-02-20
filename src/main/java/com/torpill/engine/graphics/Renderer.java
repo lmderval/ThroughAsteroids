@@ -62,6 +62,7 @@ public class Renderer {
         }
 
         transformation.setPerspective(FOV, Window.getFramebufferWidth(), Window.getFramebufferHeight(), Z_NEAR, Z_FAR, perspective_mat);
+//        transformation.setOrthogonal(Window.getFramebufferWidth(), Window.getFramebufferHeight(), Z_NEAR, Z_FAR, perspective_mat);
 
         main.bind();
 

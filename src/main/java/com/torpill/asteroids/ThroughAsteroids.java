@@ -5,7 +5,8 @@ import com.torpill.engine.IGameLogic;
 import com.torpill.engine.KeyboardInput;
 import com.torpill.engine.MouseInput;
 import com.torpill.engine.Window;
-import com.torpill.engine.graphics.*;
+import com.torpill.engine.graphics.Camera;
+import com.torpill.engine.graphics.Renderer;
 import com.torpill.engine.graphics.lights.DirectionalLight;
 import com.torpill.engine.graphics.lights.PointLight;
 import com.torpill.engine.graphics.lights.SpotLight;
@@ -15,6 +16,7 @@ import com.torpill.engine.gui.Nuklear;
 import com.torpill.engine.gui.NuklearScene;
 import com.torpill.engine.loader.MeshCache;
 import com.torpill.engine.world.World;
+import com.torpill.engine.world.blocks.Block;
 import com.torpill.engine.world.blocks.Blocks;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Intersectionf;
@@ -24,6 +26,7 @@ import org.joml.Vector3i;
 
 import static com.torpill.asteroids.GameState.*;
 import static com.torpill.engine.graphics.post.FBO.DEPTH_RENDER_BUFFER;
+import static com.torpill.engine.world.blocks.Block.Face.*;
 import static java.lang.Float.POSITIVE_INFINITY;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -34,30 +37,27 @@ public class ThroughAsteroids implements IGameLogic {
 
     private final Renderer renderer = new Renderer();
     private final Camera camera = new Camera();
-    private FBO fbo;
-
     private final Vector3f ambient_light = new Vector3f(0.35f);
-//    private final PointLight.Attenuation att = new PointLight.Attenuation(0f, 0.1f, 0.5f);
+    //    private final PointLight.Attenuation att = new PointLight.Attenuation(0f, 0.1f, 0.5f);
 //    private final PointLight point_light = new PointLight(new Vector3f(1f), new Vector3f(10f, 9f, 8f), 0.7f, att);
     private final PointLight point_light = PointLight.NULL;
-//    private final PointLight spot_point_light = new PointLight(new Vector3f(1f), new Vector3f(10f, 9f, 8f), 1.25f, att);
+    //    private final PointLight spot_point_light = new PointLight(new Vector3f(1f), new Vector3f(10f, 9f, 8f), 1.25f, att);
 //    private final SpotLight spot_light = new SpotLight(new Vector3f(0f, 0f, -1f), 20f, spot_point_light);
     private final SpotLight spot_light = SpotLight.NULL;
     private final DirectionalLight directional_light = new DirectionalLight(new Vector3f(1f, 0.9f, 0.75f), new Vector3f(0f, -1f, 1f), 0.45f);
-//    private final DirectionalLight directional_light = DirectionalLight.NULL;
-
     private final Vector3i direction = new Vector3i();
+//    private final DirectionalLight directional_light = DirectionalLight.NULL;
     private final Vector2f rotation = new Vector2f();
     private final Vector3i playerDirection = new Vector3i();
-
     private final NuklearScene nkPause = new NkPauseScene();
-
     public GameState gameState = MENU;
     public GameState lastGameState = MENU;
+    private FBO fbo;
     private World world;
 
     private long tick = 0L;
     private int rollTick = 0;
+    private int clickTick;
 
     @Override
     public void init(@NotNull Window window) throws Exception {
@@ -158,7 +158,40 @@ public class ThroughAsteroids implements IGameLogic {
                 world.getPlayer().roll(-playerDirection.x * 10f);
                 world.getPlayer().update();
 
-                cameraSelection();
+                Vector3i selected = cameraSelection();
+                world.setSelected(selected);
+
+                if (clickTick == 0) {
+                    if (mouse_input.isLeftButtonPressed()) {
+                        world.setBlock(selected.x, selected.y, selected.z, null);
+                        clickTick = 3;
+                    }
+                    if (mouse_input.isRightButtonPressed()) {
+                        switch (faceCameraSelection(selected)) {
+                            case TOP:
+                                world.setBlock(selected.x, selected.y + 1, selected.z, Blocks.WALL_BRICK);
+                                break;
+                            case BOTTOM:
+                                world.setBlock(selected.x, selected.y - 1, selected.z, Blocks.WALL_BRICK);
+                                break;
+                            case RIGHT:
+                                world.setBlock(selected.x - 1, selected.y, selected.z, Blocks.WALL_BRICK);
+                                break;
+                            case LEFT:
+                                world.setBlock(selected.x + 1, selected.y, selected.z, Blocks.WALL_BRICK);
+                                break;
+                            case FRONT:
+                                world.setBlock(selected.x, selected.y, selected.z + 1, Blocks.WALL_BRICK);
+                                break;
+                            case BACK:
+                                world.setBlock(selected.x, selected.y, selected.z - 1, Blocks.WALL_BRICK);
+                                break;
+                        }
+                        clickTick = 4;
+                    }
+                } else if (clickTick > 0) {
+                    clickTick --;
+                }
 
                 spot_light.setDirection((float) Math.cos(Math.toRadians(tick)), (float) Math.sin(Math.toRadians(tick)), -1f);
 
@@ -201,7 +234,7 @@ public class ThroughAsteroids implements IGameLogic {
         renderer.cleanup();
     }
 
-    public void cameraSelection() {
+    private Vector3i cameraSelection() {
         Vector3f dir = new Vector3f();
         dir = camera.getViewMat().positiveZ(dir).negate();
 
@@ -237,59 +270,112 @@ public class ThroughAsteroids implements IGameLogic {
             }
         }
 
-        world.setSelected(selected);
+        return selected;
+    }
+
+    private Block.Face faceCameraSelection(@NotNull Vector3i position) {
+        Block.Face face = NULL;
+
+        Vector3f dir = new Vector3f();
+        dir = camera.getViewMat().positiveZ(dir).negate();
+
+        Vector2f result = new Vector2f();
+        float closest = POSITIVE_INFINITY;
+
+        Vector3f min = new Vector3f(-.5f, .5f, -.5f).add(position.x, position.y, position.z);
+        Vector3f max = new Vector3f(.5f, .51f, .5f).add(position.x, position.y, position.z);
+        if (Intersectionf.intersectRayAab(camera.getPosition(), dir, min, max, result) && result.x < closest) {
+            closest = result.x;
+            face = TOP;
+        }
+
+        max.add(0f, -1.01f, 0f);
+        min.add(0f, -1.01f, 0f);
+        if (Intersectionf.intersectRayAab(camera.getPosition(), dir, min, max, result) && result.x < closest) {
+            closest = result.x;
+            face = BOTTOM;
+        }
+
+        max.add(-1f, 1f, 0f);
+        min.add(-0.01f, 0.01f, 0f);
+        if (Intersectionf.intersectRayAab(camera.getPosition(), dir, min, max, result) && result.x < closest) {
+            closest = result.x;
+            face = RIGHT;
+        }
+
+        max.add(1.01f, 0f, 0f);
+        min.add(1.01f, 0f, 0f);
+        if (Intersectionf.intersectRayAab(camera.getPosition(), dir, min, max, result) && result.x < closest) {
+            closest = result.x;
+            face = LEFT;
+        }
+
+        max.add(-0.01f, 0f, -1f);
+        min.add(-1f, 0f, -0.01f);
+        if (Intersectionf.intersectRayAab(camera.getPosition(), dir, min, max, result) && result.x < closest) {
+            closest = result.x;
+            face = BACK;
+        }
+
+        max.add(0f, 0f, 1.01f);
+        min.add(0f, 0f, 1.01f);
+        if (Intersectionf.intersectRayAab(camera.getPosition(), dir, min, max, result) && result.x < closest) {
+            face = FRONT;
+        }
+
+        return face;
     }
 
     private void loadWorld() {
 
         world = new World(64, 16, 64, 16, 16);
-        for (int i = 0; i < 32; i ++) {
-            for (int j = 0; j < 18; j ++) {
+        for (int i = 0; i < 32; i++) {
+            for (int j = 0; j < 18; j++) {
                 world.setBlock(i, 0, j, Blocks.WALL);
             }
         }
 
-        for (int i = 0; i < 18; i ++) {
-            for (int j = 9; j < 14; j ++) {
+        for (int i = 0; i < 18; i++) {
+            for (int j = 9; j < 14; j++) {
                 world.setBlock(i, 0, j, null);
             }
         }
 
-        for (int i = 18; i < 23; i ++) {
-            for (int j = 9; j < 13; j ++) {
+        for (int i = 18; i < 23; i++) {
+            for (int j = 9; j < 13; j++) {
                 world.setBlock(i, 0, j, null);
             }
         }
 
-        for (int i = 23; i < 32; i ++) {
-            for (int j = 10; j < 13; j ++) {
+        for (int i = 23; i < 32; i++) {
+            for (int j = 10; j < 13; j++) {
                 world.setBlock(i, 0, j, null);
             }
         }
 
         world.setBlock(24, 0, 1, Blocks.WALL_BRICK);
-        for (int i = 25; i < 28; i ++) {
-            for (int j = 0; j < 2; j ++) {
+        for (int i = 25; i < 28; i++) {
+            for (int j = 0; j < 2; j++) {
                 world.setBlock(i, 0, j, Blocks.WALL_BRICK);
             }
         }
         world.setBlock(28, 0, 0, Blocks.WALL_BRICK);
 
-        for (int i = 12; i < 16; i ++) {
-            for (int j = 5; j < 7; j ++) {
+        for (int i = 12; i < 16; i++) {
+            for (int j = 5; j < 7; j++) {
                 world.setBlock(i, 0, j, Blocks.WALL_BRICK);
             }
         }
 
-        for (int i = 0; i < 2; i ++) {
-            for (int j = 15; j < 18; j ++) {
+        for (int i = 0; i < 2; i++) {
+            for (int j = 15; j < 18; j++) {
                 world.setBlock(i, 0, j, Blocks.WALL_BRICK);
             }
         }
         world.setBlock(2, 0, 17, Blocks.WALL_BRICK);
 
-        for (int i = 18; i < 22; i ++) {
-            for (int j = 16; j < 18; j ++) {
+        for (int i = 18; i < 22; i++) {
+            for (int j = 16; j < 18; j++) {
                 world.setBlock(i, 0, j, Blocks.WALL_BRICK);
             }
         }
@@ -297,17 +383,17 @@ public class ThroughAsteroids implements IGameLogic {
         world.setBlock(31, 0, 7, Blocks.WALL_BRICK);
         world.setBlock(31, 0, 8, Blocks.WALL_BRICK);
 
-        for (int i = 3; i < 6; i ++) {
+        for (int i = 3; i < 6; i++) {
             world.setBlock(i, 0, 1, Blocks.WALL_ORE);
         }
         world.setBlock(4, 0, 2, Blocks.WALL_ORE);
 
-        for (int i = 4; i < 7; i ++) {
+        for (int i = 4; i < 7; i++) {
             world.setBlock(20, 0, i, Blocks.WALL_ORE);
         }
         world.setBlock(21, 0, 5, Blocks.WALL_ORE);
 
-        for (int i = 27; i < 30; i ++) {
+        for (int i = 27; i < 30; i++) {
             world.setBlock(i, 0, 16, Blocks.WALL_ORE);
         }
         world.setBlock(28, 0, 15, Blocks.WALL_ORE);
@@ -364,8 +450,8 @@ public class ThroughAsteroids implements IGameLogic {
         world.getPlayer().setPosition(2f, -0.3f, 11f);
         world.getPlayer().setRotation(0f, 90f, 0f);
 
-        camera.setPosition(15.5f, 12f, 12f);
-        camera.setRotation(80f, 0f, 0f);
+        camera.setPosition(15.5f, 12f, 12.5f);
+        camera.setRotation(70f, 0f, 0f);
         camera.updateViewMat();
     }
 

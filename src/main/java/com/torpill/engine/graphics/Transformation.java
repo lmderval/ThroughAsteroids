@@ -13,6 +13,12 @@ public class Transformation {
                 .perspective(fov, width / height, z_near, z_far);
     }
 
+    public void setOrthogonal(float width, float height, float z_near, float z_far, @NotNull Matrix4f perspective) {
+        perspective.identity()
+                .orthoSymmetric(width, height, z_near, z_far, perspective)
+                .scale(height / 720f * 18f);
+    }
+
     public void setWorld(@NotNull Vector3f position, float scale, @NotNull Vector3f rotation, @NotNull Matrix4f world) {
         world.identity()
                 .translate(position.x * 2f, position.y * 2f, position.z * 2f)

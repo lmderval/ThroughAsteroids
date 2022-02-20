@@ -22,4 +22,14 @@ public class Block {
     public Mesh getMesh() {
         return mesh;
     }
+
+    public static enum Face {
+        NULL,
+        TOP,
+        BOTTOM,
+        RIGHT,
+        LEFT,
+        FRONT,
+        BACK
+    }
 }
