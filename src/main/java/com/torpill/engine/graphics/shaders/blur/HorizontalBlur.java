@@ -1,6 +1,8 @@
 package com.torpill.engine.graphics.shaders.blur;
 
+import com.torpill.engine.Window;
 import com.torpill.engine.graphics.post.ImageRenderer;
+import org.jetbrains.annotations.NotNull;
 
 import static com.torpill.engine.graphics.shaders.blur.HorizontalBlurShader.UNI_TARGET_WIDTH;
 import static com.torpill.engine.graphics.shaders.main.MainShader.UNI_TEX_SAMPLER;
@@ -16,11 +18,15 @@ public class HorizontalBlur {
 
 	private final float targetFboWidth;
 	
-	public HorizontalBlur(int targetFboWidth, int targetFboHeight) throws Exception {
-		renderer = new ImageRenderer(targetFboWidth, targetFboHeight);
+	public HorizontalBlur(@NotNull Window window, int width, int height) throws Exception {
+		renderer = new ImageRenderer(window, width, height);
 		shader = new HorizontalBlurShader();
 		shader.setup();
-		this.targetFboWidth = targetFboWidth;
+		this.targetFboWidth = width;
+	}
+
+	public void resizeRenderer(int width, int height) {
+		renderer.recreateFBO(width, height);
 	}
 	
 	public void render(int texture){

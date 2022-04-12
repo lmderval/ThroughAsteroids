@@ -1,6 +1,8 @@
 package com.torpill.engine.graphics.shaders.bloom;
 
+import com.torpill.engine.Window;
 import com.torpill.engine.graphics.post.ImageRenderer;
+import org.jetbrains.annotations.NotNull;
 
 import static com.torpill.engine.graphics.shaders.bloom.BrightFilterShader.UNI_TEX_SAMPLER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
@@ -13,10 +15,14 @@ public class BrightFilter {
     private final ImageRenderer renderer;
     private final BrightFilterShader shader;
 
-    public BrightFilter(int width, int height) throws Exception {
-        renderer = new ImageRenderer(width, height);
+    public BrightFilter(@NotNull Window window, int width, int height) throws Exception {
+        renderer = new ImageRenderer(window, width, height);
         shader = new BrightFilterShader();
         shader.setup();
+    }
+
+    public void resizeRenderer(int width, int height) {
+        renderer.recreateFBO(width, height);
     }
 
     public void render(int texture) {

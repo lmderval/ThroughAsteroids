@@ -3,6 +3,7 @@ package com.torpill.engine.world;
 import com.torpill.engine.world.blocks.Block;
 import com.torpill.engine.world.entities.Entity;
 import com.torpill.engine.world.entities.EntityPlayer;
+import com.torpill.engine.world.entities.PhysicsEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3i;

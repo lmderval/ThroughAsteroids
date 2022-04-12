@@ -8,9 +8,8 @@ uniform sampler2D tex_sampler;
 
 void main() {
     vec4 color = texture(tex_sampler, frag_textures);
-    float brightness = color.r * 0.2126 + color.g * 0.7152 + color.b * 0.0722;
-    if (brightness > 0.6) {
-        out_color = color * brightness * brightness;
+    if (color.r > 0.6) {
+        out_color = vec4(color.r * color.r, 0, 0, 0);
     } else {
         out_color = vec4(0.0);
     }

@@ -1,5 +1,8 @@
 package com.torpill.engine.graphics.post;
 
+import com.torpill.engine.Window;
+import org.jetbrains.annotations.NotNull;
+
 import static com.torpill.engine.graphics.post.FBO.NONE;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -7,11 +10,15 @@ public class ImageRenderer {
 
 	private FBO fbo;
 
-	public ImageRenderer(int width, int height) {
-		fbo = new FBO(width, height, NONE);
+	public ImageRenderer(@NotNull Window window, int width, int height) {
+		fbo = new FBO(window, width, height, NONE);
 	}
 
 	public ImageRenderer() {
+	}
+
+	public void recreateFBO(int width, int height) {
+		fbo.recreate(width, height, NONE);
 	}
 
 	public void renderQuad() {

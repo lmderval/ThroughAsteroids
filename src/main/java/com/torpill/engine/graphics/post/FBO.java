@@ -1,6 +1,7 @@
 package com.torpill.engine.graphics.post;
 
 import com.torpill.engine.Window;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
 
@@ -13,8 +14,10 @@ public class FBO {
     public static final int DEPTH_TEXTURE = 1;
     public static final int DEPTH_RENDER_BUFFER = 2;
 
-    private final int width;
-    private final int height;
+    private final Window window;
+
+    private int width;
+    private int height;
 
     private int frameBuffer;
 
@@ -33,9 +36,17 @@ public class FBO {
      * @param depthBufferType - an int indicating the type of depth buffer attachment that
      *                        this FBO should use.
      */
-    public FBO(int width, int height, int depthBufferType) {
+    public FBO(@NotNull Window window, int width, int height, int depthBufferType) {
+        this.window = window;
         this.width = width;
         this.height = height;
+        initialiseFrameBuffer(depthBufferType);
+    }
+
+    public void recreate(int width, int height, int depthBufferType) {
+        this.width = width;
+        this.height = height;
+        cleanup();
         initialiseFrameBuffer(depthBufferType);
     }
 
@@ -66,7 +77,7 @@ public class FBO {
      */
     public void unbindFrameBuffer() {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, Window.getWidth(), Window.getHeight());
+        glViewport(0, 0, window.getWidth(), window.getHeight());
     }
 
     /**
@@ -163,5 +174,4 @@ public class FBO {
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
                 depthBuffer);
     }
-
 }

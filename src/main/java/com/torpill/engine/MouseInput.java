@@ -26,6 +26,8 @@ public class MouseInput {
     private boolean left_pressed = false;
     private boolean right_pressed = false;
 
+    private int scroll = 0;
+
     public void init(@NotNull Window window, @NotNull Nuklear nk) {
         NkContext ctx = nk.getContext();
         glfwSetScrollCallback(window.getWindowHandle(), (windowHandle, xoffset, yoffset) -> {
@@ -42,6 +44,9 @@ public class MouseInput {
             nk_input_motion(ctx, (int) x_pos, (int) y_pos);
         });
         glfwSetCursorEnterCallback(window.getWindowHandle(), (windowHandle, entered) -> in_window = entered);
+        glfwSetScrollCallback(window.getWindowHandle(), (windowHandle, x_offset, y_offset) -> {
+            scroll += y_offset;
+        });
         glfwSetMouseButtonCallback(window.getWindowHandle(), (windowHandle, button, action, mode) -> {
             boolean pressed = action == GLFW_PRESS;
             left_pressed = button == GLFW_MOUSE_BUTTON_LEFT && pressed;
@@ -100,5 +105,13 @@ public class MouseInput {
 
     public boolean isRightButtonPressed() {
         return right_pressed;
+    }
+
+    public int getScroll() {
+        return scroll;
+    }
+
+    public void setScroll(int scroll) {
+        this.scroll = scroll;
     }
 }

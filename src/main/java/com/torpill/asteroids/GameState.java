@@ -5,6 +5,7 @@ public enum GameState {
     MENU,
     PAUSE,
     PLAY,
+    END,
     EDIT,
     QUIT
 }

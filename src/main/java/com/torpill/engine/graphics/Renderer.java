@@ -1,20 +1,23 @@
 package com.torpill.engine.graphics;
 
+import com.torpill.engine.Window;
 import com.torpill.engine.graphics.lights.DirectionalLight;
 import com.torpill.engine.graphics.lights.PointLight;
 import com.torpill.engine.graphics.lights.SpotLight;
 import com.torpill.engine.graphics.meshes.Mesh;
 import com.torpill.engine.graphics.meshes.Texture;
+import com.torpill.engine.graphics.post.DeathPostProcessing;
+import com.torpill.engine.graphics.post.MainPostProcessing;
 import com.torpill.engine.graphics.shaders.main.MainShader;
-import com.torpill.engine.world.blocks.Block;
 import com.torpill.engine.world.Chunk;
-import com.torpill.engine.world.entities.Entity;
-import com.torpill.engine.Window;
 import com.torpill.engine.world.World;
+import com.torpill.engine.world.blocks.Block;
+import com.torpill.engine.world.entities.Entity;
 import org.jetbrains.annotations.NotNull;
-import org.joml.*;
-
-import java.lang.Math;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector3i;
+import org.joml.Vector4f;
 
 import static com.torpill.engine.graphics.shaders.main.MainShader.*;
 import static com.torpill.engine.world.blocks.Block.BLOCK_MESH;
@@ -29,17 +32,13 @@ public class Renderer {
 
     private static final int RENDER_DISTANCE = 3;
     private static final int RENDER_DISTANCE_SQUARED = RENDER_DISTANCE * RENDER_DISTANCE;
-
-    private MainShader main;
-
     private final Transformation transformation = new Transformation();
-
     private final Matrix4f perspective_mat = new Matrix4f();
-
+    private final Matrix4f curr_mat = new Matrix4f();
+    private MainShader main;
     private Mesh curr_mesh;
     private Texture curr_texture;
     private Texture curr_light_map;
-    private final Matrix4f curr_mat = new Matrix4f();
 
     public void init() throws Exception {
         setupMain();
@@ -54,15 +53,14 @@ public class Renderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the framebuffer
     }
 
-    public void preRender(@NotNull Window window, @NotNull Camera camera, @NotNull Vector3f ambient_light, @NotNull PointLight point_light, @NotNull SpotLight spot_light, @NotNull DirectionalLight directional_light) {
+    public void preRender(@NotNull Window window, @NotNull Camera camera, boolean perspective, @NotNull Vector3f ambient_light, @NotNull PointLight point_light, @NotNull SpotLight spot_light, @NotNull DirectionalLight directional_light) {
         clear();
-        if (window.isResized()) {
-            glViewport(0, 0, Window.getFramebufferWidth(), Window.getFramebufferHeight());
-            window.setResized(false);
-        }
 
-        transformation.setPerspective(FOV, Window.getFramebufferWidth(), Window.getFramebufferHeight(), Z_NEAR, Z_FAR, perspective_mat);
-//        transformation.setOrthogonal(Window.getFramebufferWidth(), Window.getFramebufferHeight(), Z_NEAR, Z_FAR, perspective_mat);
+        if (perspective) {
+            transformation.setPerspective(FOV, window.getFramebufferWidth(), window.getFramebufferHeight(), Z_NEAR, Z_FAR, perspective_mat);
+        } else {
+            transformation.setOrthogonal(window.getFramebufferWidth(), window.getFramebufferHeight(), Z_NEAR, Z_FAR, perspective_mat);
+        }
 
         main.bind();
 
@@ -184,7 +182,7 @@ public class Renderer {
 
     public void renderWorld(@NotNull World world, @NotNull Camera camera) {
         Chunk chunk;
-        Matrix4f view_mat =  camera.getViewMat();
+        Matrix4f view_mat = camera.getViewMat();
         int world_width = world.getWidth();
         int world_depth = world.getDepth();
         int chunk_width = world.getChunkWidth();
@@ -218,7 +216,7 @@ public class Renderer {
                 if (delta_x * delta_x + delta_z * delta_z < RENDER_DISTANCE_SQUARED) {
                     chunk = world.getChunk(i, k);
                     if (chunk != null) {
-                        position.set(i * chunk_width, 0,k * chunk_depth);
+                        position.set(i * chunk_width, 0, k * chunk_depth);
                         renderChunk(chunk, world, position, view_mat);
                     }
                 }

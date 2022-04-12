@@ -1,6 +1,8 @@
 package com.torpill.engine.graphics.shaders.blur;
 
+import com.torpill.engine.Window;
 import com.torpill.engine.graphics.post.ImageRenderer;
+import org.jetbrains.annotations.NotNull;
 
 import static com.torpill.engine.graphics.shaders.blur.VerticalBlurShader.UNI_TARGET_HEIGHT;
 import static com.torpill.engine.graphics.shaders.main.MainShader.UNI_TEX_SAMPLER;
@@ -16,13 +18,16 @@ public class VerticalBlur {
 
 	private final float targetFboHeight;
 	
-	public VerticalBlur(int targetFboWidth, int targetFboHeight) throws Exception {
-		renderer = new ImageRenderer(targetFboWidth, targetFboHeight);
+	public VerticalBlur(@NotNull Window window, int width, int height) throws Exception {
+		renderer = new ImageRenderer(window, width, height);
 		shader = new VerticalBlurShader();
 		shader.setup();
-		this.targetFboHeight = targetFboHeight;
+		this.targetFboHeight = height;
 	}
 
+	public void resizeRenderer(int width, int height) {
+		renderer.recreateFBO(width, height);
+	}
 	
 	public void render(int texture){
 		shader.bind();

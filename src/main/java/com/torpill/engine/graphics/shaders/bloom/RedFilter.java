@@ -1,29 +1,23 @@
-package com.torpill.engine.graphics.shaders.contrast;
+package com.torpill.engine.graphics.shaders.bloom;
 
 import com.torpill.engine.Window;
 import com.torpill.engine.graphics.post.ImageRenderer;
 import org.jetbrains.annotations.NotNull;
 
-import static com.torpill.engine.graphics.shaders.main.MainShader.UNI_TEX_SAMPLER;
+import static com.torpill.engine.graphics.shaders.bloom.RedFilterShader.UNI_TEX_SAMPLER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 
-public class ContrastChanger {
+public class RedFilter {
 
     private final ImageRenderer renderer;
-    private final ContrastShader shader;
+    private final RedFilterShader shader;
 
-    public ContrastChanger() throws Exception {
-        renderer = new ImageRenderer();
-        shader = new ContrastShader();
-        shader.setup();
-    }
-
-    public ContrastChanger(@NotNull Window window, int width, int height) throws Exception {
+    public RedFilter(@NotNull Window window, int width, int height) throws Exception {
         renderer = new ImageRenderer(window, width, height);
-        shader = new ContrastShader();
+        shader = new RedFilterShader();
         shader.setup();
     }
 
@@ -40,7 +34,7 @@ public class ContrastChanger {
         shader.unbind();
     }
 
-    public int getOutputTexture(){
+    public int getOutputTexture() {
         return renderer.getOutputTexture();
     }
 

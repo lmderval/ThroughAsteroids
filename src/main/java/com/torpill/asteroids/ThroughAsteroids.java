@@ -1,5 +1,6 @@
 package com.torpill.asteroids;
 
+import com.torpill.asteroids.gui.death.NkDeathScene;
 import com.torpill.asteroids.gui.pause.NkPauseScene;
 import com.torpill.engine.IGameLogic;
 import com.torpill.engine.KeyboardInput;
@@ -11,7 +12,8 @@ import com.torpill.engine.graphics.lights.DirectionalLight;
 import com.torpill.engine.graphics.lights.PointLight;
 import com.torpill.engine.graphics.lights.SpotLight;
 import com.torpill.engine.graphics.post.FBO;
-import com.torpill.engine.graphics.post.PostProcessing;
+import com.torpill.engine.graphics.post.DeathPostProcessing;
+import com.torpill.engine.graphics.post.MainPostProcessing;
 import com.torpill.engine.gui.Nuklear;
 import com.torpill.engine.gui.NuklearScene;
 import com.torpill.engine.loader.MeshCache;
@@ -29,6 +31,7 @@ import static com.torpill.engine.graphics.post.FBO.DEPTH_RENDER_BUFFER;
 import static com.torpill.engine.world.blocks.Block.Face.*;
 import static java.lang.Float.POSITIVE_INFINITY;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.glViewport;
 
 public class ThroughAsteroids implements IGameLogic {
 
@@ -37,6 +40,7 @@ public class ThroughAsteroids implements IGameLogic {
 
     private final Renderer renderer = new Renderer();
     private final Camera camera = new Camera();
+    private boolean perspective = true;
     private final Vector3f ambient_light = new Vector3f(0.35f);
     //    private final PointLight.Attenuation att = new PointLight.Attenuation(0f, 0.1f, 0.5f);
 //    private final PointLight point_light = new PointLight(new Vector3f(1f), new Vector3f(10f, 9f, 8f), 0.7f, att);
@@ -49,21 +53,25 @@ public class ThroughAsteroids implements IGameLogic {
 //    private final DirectionalLight directional_light = DirectionalLight.NULL;
     private final Vector2f rotation = new Vector2f();
     private final Vector3i playerDirection = new Vector3i();
-    private final NuklearScene nkPause = new NkPauseScene();
+    private final NkPauseScene nkPause = new NkPauseScene();
+    private final NkDeathScene nkDeath = new NkDeathScene();
     public GameState gameState = MENU;
     public GameState lastGameState = MENU;
     private FBO fbo;
     private World world;
 
     private long tick = 0L;
-    private int rollTick = 0;
+    private long deathTick = 0L;
     private int clickTick;
+
+    private int currentBlock = 0;
 
     @Override
     public void init(@NotNull Window window) throws Exception {
         renderer.init();
-        fbo = new FBO(Window.getWidth(), Window.getHeight(), DEPTH_RENDER_BUFFER);
-        PostProcessing.init();
+        fbo = new FBO(window, window.getWidth(), window.getHeight(), DEPTH_RENDER_BUFFER);
+        MainPostProcessing.init(window);
+        DeathPostProcessing.init(window);
 
         Blocks.load();
         MeshCache.load();
@@ -99,6 +107,12 @@ public class ThroughAsteroids implements IGameLogic {
         if (keyboard_input.isPressed(GLFW_KEY_RIGHT)) {
             playerDirection.x -= 1;
         }
+        if (keyboard_input.isPressed(GLFW_KEY_UP)) {
+            playerDirection.z += 1;
+        }
+        if (keyboard_input.isPressed(GLFW_KEY_DOWN)) {
+            playerDirection.z -= 1;
+        }
     }
 
     @Override
@@ -120,18 +134,30 @@ public class ThroughAsteroids implements IGameLogic {
         }
         switch (gameState) {
             case PLAY:
-                world.getPlayer().rotate(1f);
-                world.getPlayer().forward(0.1f);
+                world.setSelected(new Vector3i(-1));
+
+                world.getPlayer().control(-playerDirection.x);
+                world.getPlayer().update(world);
 
                 Vector3f pos = world.getPlayer().getPosition();
                 float dy = 10f;
                 camera.setPosition(pos.x, pos.y + dy, pos.z + dy / (float) Math.tan(Math.toRadians(camera.getRotation().x)));
+
+                if (!world.getPlayer().isAlive()) {
+                    gameState = END;
+                    deathTick = tick;
+                }
 
                 window.disableCursor();
 
                 camera.updateViewMat();
 
                 tick++;
+                break;
+            case END:
+                window.showCursor();
+
+                tick ++;
                 break;
             case EDIT:
                 // Update camera based on mouse
@@ -154,9 +180,11 @@ public class ThroughAsteroids implements IGameLogic {
                     camera.updateViewMat();
                 }
 
-                world.getPlayer().applyForce(new Vector3f(playerDirection.x * 20f, 0f, 0f).rotateY((float) Math.toRadians(world.getPlayer().getRotation().y)));
-                world.getPlayer().roll(-playerDirection.x * 10f);
-                world.getPlayer().update();
+                currentBlock += mouse_input.getScroll();
+                currentBlock %= Blocks.blocks.size();
+                if (currentBlock < 0) currentBlock += Blocks.blocks.size();
+                System.out.println(currentBlock);
+                mouse_input.setScroll(0);
 
                 Vector3i selected = cameraSelection();
                 world.setSelected(selected);
@@ -169,22 +197,22 @@ public class ThroughAsteroids implements IGameLogic {
                     if (mouse_input.isRightButtonPressed()) {
                         switch (faceCameraSelection(selected)) {
                             case TOP:
-                                world.setBlock(selected.x, selected.y + 1, selected.z, Blocks.WALL_BRICK);
+                                world.setBlock(selected.x, selected.y + 1, selected.z, Blocks.blocks.get(currentBlock));
                                 break;
                             case BOTTOM:
-                                world.setBlock(selected.x, selected.y - 1, selected.z, Blocks.WALL_BRICK);
+                                world.setBlock(selected.x, selected.y - 1, selected.z, Blocks.blocks.get(currentBlock));
                                 break;
                             case RIGHT:
-                                world.setBlock(selected.x - 1, selected.y, selected.z, Blocks.WALL_BRICK);
+                                world.setBlock(selected.x - 1, selected.y, selected.z, Blocks.blocks.get(currentBlock));
                                 break;
                             case LEFT:
-                                world.setBlock(selected.x + 1, selected.y, selected.z, Blocks.WALL_BRICK);
+                                world.setBlock(selected.x + 1, selected.y, selected.z, Blocks.blocks.get(currentBlock));
                                 break;
                             case FRONT:
-                                world.setBlock(selected.x, selected.y, selected.z + 1, Blocks.WALL_BRICK);
+                                world.setBlock(selected.x, selected.y, selected.z + 1, Blocks.blocks.get(currentBlock));
                                 break;
                             case BACK:
-                                world.setBlock(selected.x, selected.y, selected.z - 1, Blocks.WALL_BRICK);
+                                world.setBlock(selected.x, selected.y, selected.z - 1, Blocks.blocks.get(currentBlock));
                                 break;
                         }
                         clickTick = 4;
@@ -208,10 +236,21 @@ public class ThroughAsteroids implements IGameLogic {
 //        nkDemo.update(window, nk);
         if (gameState == PAUSE)
             nkPause.update(window, nk);
+        if (gameState == END) {
+            nkDeath.setOpacity(tick - deathTick);
+            nkDeath.update(window, nk);
+        }
     }
 
     @Override
     public void render(@NotNull Window window) {
+        if (window.isResized()) {
+            glViewport(0, 0, window.getFramebufferWidth(), window.getFramebufferHeight());
+            fbo.recreate(window.getWidth(), window.getHeight(), DEPTH_RENDER_BUFFER);
+            MainPostProcessing.resize(window);
+            DeathPostProcessing.resize(window);
+            window.setResized(false);
+        }
         window.setClearColor(15, 15, 19, 255);
         {
             // Nuklear rendering
@@ -219,17 +258,22 @@ public class ThroughAsteroids implements IGameLogic {
         if (gameState != MENU) {
             // World rendering
             fbo.bindFrameBuffer();
-            renderer.preRender(window, camera, ambient_light, point_light, spot_light, directional_light);
+            renderer.preRender(window, camera, perspective, ambient_light, point_light, spot_light, directional_light);
             renderer.renderWorld(world, camera);
             renderer.postRender();
             fbo.unbindFrameBuffer();
-            PostProcessing.doPostProcessing(fbo.getColourTexture());
+            if (gameState != END) {
+                MainPostProcessing.doPostProcessing(window, fbo.getColourTexture());
+            } else {
+                DeathPostProcessing.doPostProcessing(window, fbo.getColourTexture());
+            }
         }
     }
 
     @Override
     public void cleanup() {
-        PostProcessing.cleanup();
+        MainPostProcessing.cleanup();
+        DeathPostProcessing.cleanup();
         fbo.cleanup();
         renderer.cleanup();
     }
@@ -450,19 +494,29 @@ public class ThroughAsteroids implements IGameLogic {
         world.getPlayer().setPosition(2f, -0.3f, 11f);
         world.getPlayer().setRotation(0f, 90f, 0f);
 
-        camera.setPosition(15.5f, 12f, 12.5f);
-        camera.setRotation(70f, 0f, 0f);
+        camera.setPosition(15.5f, 12f, 13.5f);
+        camera.setRotation(65f, 0f, 0f);
         camera.updateViewMat();
     }
 
     public void edit(boolean reload) {
         if (reload) loadWorld();
         gameState = EDIT;
+        perspective = true;
+
+        world.getPlayer().setPosition(2f, -0.3f, 11f);
+        world.getPlayer().setRotation(0f, 90f, 0f);
     }
 
     public void play(boolean reload) {
         if (reload) loadWorld();
         gameState = PLAY;
+        perspective = false;
+
+        world.getPlayer().setAlive(true);
+        world.getPlayer().resetControl();
+        world.getPlayer().setPosition(2f, -0.3f, 11f);
+        world.getPlayer().setRotation(0f, 90f, 0f);
 
         camera.setRotation(70f, 0f, 0f);
         camera.updateViewMat();

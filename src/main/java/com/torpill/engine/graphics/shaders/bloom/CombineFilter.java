@@ -1,6 +1,8 @@
 package com.torpill.engine.graphics.shaders.bloom;
 
+import com.torpill.engine.Window;
 import com.torpill.engine.graphics.post.ImageRenderer;
+import org.jetbrains.annotations.NotNull;
 
 import static com.torpill.engine.graphics.shaders.bloom.CombineShader.UNI_COLOR_TEX_SAMPLER;
 import static com.torpill.engine.graphics.shaders.bloom.CombineShader.UNI_HIGHLIGHT_TEX_SAMPLER;
@@ -19,6 +21,16 @@ public class CombineFilter {
         shader.setup();
     }
 
+    public CombineFilter(@NotNull Window window, int width, int height) throws Exception {
+        renderer = new ImageRenderer(window, width, height);
+        shader = new CombineShader();
+        shader.setup();
+    }
+
+    public void resizeRenderer(int width, int height) {
+        renderer.recreateFBO(width, height);
+    }
+
     public void render(int colourTexture, int highlightTexture) {
         shader.bind();
         shader.setUniform(UNI_COLOR_TEX_SAMPLER, 0);
@@ -29,6 +41,10 @@ public class CombineFilter {
         glBindTexture(GL_TEXTURE_2D, highlightTexture);
         renderer.renderQuad();
         shader.unbind();
+    }
+
+    public int getOutputTexture(){
+        return renderer.getOutputTexture();
     }
 
     public void cleanup() {

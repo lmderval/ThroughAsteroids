@@ -1,29 +1,21 @@
-package com.torpill.engine.graphics.shaders.contrast;
+package com.torpill.engine.graphics.shaders.pixelate;
 
-import com.torpill.engine.Window;
 import com.torpill.engine.graphics.post.ImageRenderer;
-import org.jetbrains.annotations.NotNull;
 
-import static com.torpill.engine.graphics.shaders.main.MainShader.UNI_TEX_SAMPLER;
+import static com.torpill.engine.graphics.shaders.pixelate.PixelateShader.*;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 
-public class ContrastChanger {
+public class Pixelate {
 
     private final ImageRenderer renderer;
-    private final ContrastShader shader;
+    private final PixelateShader shader;
 
-    public ContrastChanger() throws Exception {
+    public Pixelate() throws Exception {
         renderer = new ImageRenderer();
-        shader = new ContrastShader();
-        shader.setup();
-    }
-
-    public ContrastChanger(@NotNull Window window, int width, int height) throws Exception {
-        renderer = new ImageRenderer(window, width, height);
-        shader = new ContrastShader();
+        shader = new PixelateShader();
         shader.setup();
     }
 
@@ -31,16 +23,18 @@ public class ContrastChanger {
         renderer.recreateFBO(width, height);
     }
 
-    public void render(int texture) {
+    public void render(int texture, int width, int height) {
         shader.bind();
         shader.setUniform(UNI_TEX_SAMPLER, 0);
+        shader.setUniform(UNI_WIDTH, width);
+        shader.setUniform(UNI_HEIGHT, height);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
         renderer.renderQuad();
         shader.unbind();
     }
 
-    public int getOutputTexture(){
+    public int getOutputTexture() {
         return renderer.getOutputTexture();
     }
 
@@ -48,4 +42,5 @@ public class ContrastChanger {
         renderer.cleanup();
         shader.cleanup();
     }
+
 }

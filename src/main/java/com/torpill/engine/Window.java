@@ -23,16 +23,16 @@ public class Window {
     private long window;
 
     private final String title;
-    private static int framebufferWidth, framebufferHeight;
-    private static int width, height;
+    private int framebufferWidth, framebufferHeight;
+    private int width, height;
     private final boolean vsync;
 
     private boolean resized = false;
 
     public Window(String title, int width, int height, boolean vsync) {
         this.title = title;
-        Window.framebufferWidth = width;
-        Window.framebufferHeight = height;
+        framebufferWidth = width;
+        framebufferHeight = height;
         this.vsync = vsync;
     }
 
@@ -98,14 +98,14 @@ public class Window {
 
         // Setup resize callback
         glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
-            Window.framebufferWidth = width;
-            Window.framebufferHeight = height;
+            framebufferWidth = width;
+            framebufferHeight = height;
             Window.this.setResized(true);
         });
 
         glfwSetWindowSizeCallback(window, (window, width, height) -> {
-            Window.width = width;
-            Window.height = height;
+            this.width = width;
+            this.height = height;
         });
 
         // Make the window visible
@@ -150,19 +150,19 @@ public class Window {
         return resized;
     }
 
-    public static int getFramebufferWidth() {
+    public int getFramebufferWidth() {
         return framebufferWidth;
     }
 
-    public static int getFramebufferHeight() {
+    public int getFramebufferHeight() {
         return framebufferHeight;
     }
 
-    public static int getWidth() {
+    public int getWidth() {
         return width;
     }
 
-    public static int getHeight() {
+    public int getHeight() {
         return height;
     }
 

@@ -1,4 +1,4 @@
-package com.torpill.engine.graphics.shaders.contrast;
+package com.torpill.engine.graphics.shaders.death;
 
 import com.torpill.engine.Window;
 import com.torpill.engine.graphics.post.ImageRenderer;
@@ -10,20 +10,20 @@ import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 
-public class ContrastChanger {
+public class DeathFilter {
 
     private final ImageRenderer renderer;
-    private final ContrastShader shader;
+    private final DeathShader shader;
 
-    public ContrastChanger() throws Exception {
+    public DeathFilter() throws Exception {
         renderer = new ImageRenderer();
-        shader = new ContrastShader();
+        shader = new DeathShader();
         shader.setup();
     }
 
-    public ContrastChanger(@NotNull Window window, int width, int height) throws Exception {
+    public DeathFilter(@NotNull Window window, int width, int height) throws Exception {
         renderer = new ImageRenderer(window, width, height);
-        shader = new ContrastShader();
+        shader = new DeathShader();
         shader.setup();
     }
 
@@ -31,7 +31,7 @@ public class ContrastChanger {
         renderer.recreateFBO(width, height);
     }
 
-    public void render(int texture) {
+    public void render(int texture){
         shader.bind();
         shader.setUniform(UNI_TEX_SAMPLER, 0);
         glActiveTexture(GL_TEXTURE0);
@@ -44,8 +44,9 @@ public class ContrastChanger {
         return renderer.getOutputTexture();
     }
 
-    public void cleanup() {
+    public void cleanup(){
         renderer.cleanup();
         shader.cleanup();
     }
+
 }

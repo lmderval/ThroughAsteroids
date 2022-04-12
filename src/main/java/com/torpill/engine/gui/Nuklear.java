@@ -81,7 +81,7 @@ public class Nuklear {
         int BITMAP_W = 1024;
         int BITMAP_H = 1024;
 
-        int FONT_HEIGHT = 18;
+        int FONT_HEIGHT = 28;
         int fontTexID = glGenTextures();
 
         STBTTFontinfo fontInfo = STBTTFontinfo.create();
@@ -183,11 +183,11 @@ public class Nuklear {
 
     public void input(@NotNull Window window) {
 
-        width = Window.getFramebufferWidth();
-        height = Window.getFramebufferHeight();
+        width = window.getFramebufferWidth();
+        height = window.getFramebufferHeight();
 
-        display_width = Window.getFramebufferWidth();
-        display_height = Window.getFramebufferHeight();
+        display_width = window.getFramebufferWidth();
+        display_height = window.getFramebufferHeight();
 
         nk_input_begin(ctx);
         glfwPollEvents();
@@ -232,7 +232,7 @@ public class Nuklear {
                 });
     }
 
-    public @NotNull NkContext setupContext() throws Exception {
+    public void setupContext() throws Exception {
         nk_buffer_init(cmds, ALLOCATOR, BUFFER_INITIAL_SIZE);
         nuklear = new NuklearShader();
         nuklear.setup();
@@ -275,7 +275,6 @@ public class Nuklear {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
-        return ctx;
     }
 
     public void render() {
@@ -324,8 +323,8 @@ public class Nuklear {
                         .curve_segment_count(22)
                         .arc_segment_count(22)
                         .global_alpha(1.0f)
-                        .shape_AA(NK_ANTI_ALIASING_ON)
-                        .line_AA(NK_ANTI_ALIASING_ON);
+                        .shape_AA(NK_ANTI_ALIASING_OFF)
+                        .line_AA(NK_ANTI_ALIASING_OFF);
 
                 // setup buffers to load vertices and elements
                 NkBuffer vbuf = NkBuffer.mallocStack(stack);

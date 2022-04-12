@@ -3,6 +3,9 @@ package com.torpill.engine.world.blocks;
 import com.torpill.engine.graphics.meshes.Material;
 import com.torpill.engine.loader.TextureCache;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Blocks {
 
     public static Block WALL;
@@ -11,7 +14,11 @@ public class Blocks {
     public static Block WALL_EDGE;
     public static Block WALL_ORE;
 
+    public static List<Block> blocks;
+
     public static void load() throws Exception {
+        blocks = new ArrayList<>();
+
         Material wallMat = new Material(0.0f);
         wallMat.setTexture(TextureCache.getInstance().getTexture("textures/blocks/wall.png"));
         WALL = new Block(wallMat);
@@ -33,5 +40,11 @@ public class Blocks {
         wallOreMat.setTexture(TextureCache.getInstance().getTexture("textures/blocks/wall_ore.png"));
         wallOreMat.setLightMap(TextureCache.getInstance().getTexture("textures/lights/blocks/wall_ore.png"));
         WALL_ORE = new Block(wallOreMat);
+
+        blocks.add(WALL);
+        blocks.add(WALL_BRICK);
+        blocks.add(WALL_DUST);
+        blocks.add(WALL_EDGE);
+        blocks.add(WALL_ORE);
     }
 }

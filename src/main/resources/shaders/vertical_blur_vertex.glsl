@@ -2,7 +2,7 @@
 
 layout (location = 0) in vec2 position;
 
-out vec2 blurTextureCoords[11];
+out vec2 frag_textures[11];
 
 uniform float target_height;
 
@@ -12,6 +12,6 @@ void main(){
 	float pixelSize = 1.0 / target_height;
 
 	for (int i = -5; i <= 5; i ++) {
-		blurTextureCoords[i + 5] = centerTexCoords + vec2(0.0, pixelSize * i);
+		frag_textures[i + 5] = centerTexCoords + vec2(0.0, pixelSize * i);
 	}
 }
