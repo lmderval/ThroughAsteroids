@@ -40,7 +40,7 @@ public class MainPostProcessing {
 		combineFilter.resizeRenderer(window.getWidth(), window.getHeight());
 	}
 
-	public static void doPostProcessing(@NotNull Window window,int colourTexture){
+	public static void doPostProcessing(@NotNull Window window, int colourTexture){
 		start();
 		brightFilter.render(colourTexture);
 		horizontalBlur.render(brightFilter.getOutputTexture());

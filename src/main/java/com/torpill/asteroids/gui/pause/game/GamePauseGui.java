@@ -1,4 +1,4 @@
-package com.torpill.asteroids.gui.pause;
+package com.torpill.asteroids.gui.pause.game;
 
 import com.torpill.asteroids.Main;
 import com.torpill.engine.gui.NuklearScene;
@@ -10,12 +10,12 @@ import org.lwjgl.system.MemoryStack;
 import static org.lwjgl.nuklear.Nuklear.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
-public class PauseGui extends NuklearScene.Gui {
+public class GamePauseGui extends NuklearScene.Gui {
 
     private final int width = 600;
-    private final int height = 400;
+    private final int height = 330;
 
-    public PauseGui() {
+    public GamePauseGui() {
         super("Pause");
     }
 
@@ -37,11 +37,6 @@ public class PauseGui extends NuklearScene.Gui {
                 nk_layout_row_dynamic(ctx, 50, 1);
                 if (nk_button_label(ctx, "Resume")) {
                     Main.getInstance().resume();
-                }
-
-                nk_layout_row_dynamic(ctx, 50, 1);
-                if (nk_button_label(ctx, "Play")) {
-                    Main.getInstance().play(false);
                 }
 
                 nk_layout_row_dynamic(ctx, 50, 1);

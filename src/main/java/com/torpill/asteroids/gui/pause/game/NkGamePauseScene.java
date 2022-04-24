@@ -1,14 +1,15 @@
-package com.torpill.asteroids.gui.pause;
+package com.torpill.asteroids.gui.pause.game;
 
 import com.torpill.engine.Window;
 import com.torpill.engine.gui.Nuklear;
 import com.torpill.engine.gui.NuklearScene;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.nuklear.*;
+import org.lwjgl.nuklear.NkColor;
+import org.lwjgl.nuklear.NkContext;
 
-public class NkPauseScene implements NuklearScene {
+public class NkGamePauseScene implements NuklearScene {
 
-    private final PauseGui pause = new PauseGui();
+    private final GamePauseGui pause = new GamePauseGui();
 
     @Override
     public void update(@NotNull Window window, @NotNull Nuklear nk) {

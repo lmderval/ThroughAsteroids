@@ -214,7 +214,7 @@ public class Renderer {
                 delta_x = camera_chunk_x - i;
                 delta_z = camera_chunk_z - k;
                 if (delta_x * delta_x + delta_z * delta_z < RENDER_DISTANCE_SQUARED) {
-                    chunk = world.getChunk(i, k);
+                    chunk = world.getChunkIfProvided(i, k);
                     if (chunk != null) {
                         position.set(i * chunk_width, 0, k * chunk_depth);
                         renderChunk(chunk, world, position, view_mat);

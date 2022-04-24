@@ -4,7 +4,9 @@ import com.torpill.engine.graphics.meshes.Material;
 import com.torpill.engine.loader.TextureCache;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Blocks {
 
@@ -15,6 +17,7 @@ public class Blocks {
     public static Block WALL_ORE;
 
     public static List<Block> blocks;
+    public static Map<Block, Integer> map;
 
     public static void load() throws Exception {
         blocks = new ArrayList<>();
@@ -46,5 +49,14 @@ public class Blocks {
         blocks.add(WALL_DUST);
         blocks.add(WALL_EDGE);
         blocks.add(WALL_ORE);
+
+        genMap();
+    }
+
+    public static void genMap() {
+        map = new HashMap<>();
+        for (int i = 0; i < Blocks.blocks.size(); i ++) {
+            map.put(Blocks.blocks.get(i), i);
+        }
     }
 }

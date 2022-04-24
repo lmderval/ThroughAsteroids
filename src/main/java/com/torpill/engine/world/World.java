@@ -1,6 +1,7 @@
 package com.torpill.engine.world;
 
 import com.torpill.engine.world.blocks.Block;
+import com.torpill.engine.world.blocks.Blocks;
 import com.torpill.engine.world.entities.Entity;
 import com.torpill.engine.world.entities.EntityPlayer;
 import com.torpill.engine.world.entities.PhysicsEntity;
@@ -8,8 +9,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3i;
 
+import java.io.*;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class World {
 
@@ -36,6 +42,78 @@ public class World {
         chunks = new Chunk[width * depth];
         player = new EntityPlayer();
         addEntity(player);
+    }
+
+    public void load(@NotNull String dir) {
+        File directory = Path.of(dir + "/data").toFile();
+        if (directory.exists()) {
+            for (File file : Objects.requireNonNull(directory.listFiles((dir1, name) -> name.endsWith(".dat")))) {
+                String name = file.getName();
+                Pattern p = Pattern.compile("^x(\\d*)z(\\d*)\\.dat$");
+                Matcher m = p.matcher(name);
+                if (m.find()) {
+                    loadChunk(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)), file);
+                }
+            }
+        }
+    }
+
+    private void loadChunk(int chunkX, int chunkZ, @NotNull File file) {
+        try (DataInputStream in = new DataInputStream(new FileInputStream(file))) {
+            Chunk chunk = provideChunk(chunkX, chunkZ);
+            if (chunk != null) {
+                byte[] data;
+                while ((data = in.readNBytes(16)).length > 0) {
+                    int x = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
+                    int y = data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7];
+                    int z = data[8] << 24 | data[9] << 16 | data[10] << 8 | data[11];
+                    int b = data[12] << 24 | data[13] << 16 | data[14] << 8 | data[15];
+                    chunk.setBlock(x, y, z, Blocks.blocks.get(b));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void save(@NotNull String dir) {
+        for (int chunkX = 0; chunkX < width; chunkX++) {
+            for (int chunkZ = 0; chunkZ < depth; chunkZ++) {
+                if (getChunkIfProvided(chunkX, chunkZ) != null) {
+                    saveChunk(chunkX, chunkZ, dir);
+                }
+            }
+        }
+    }
+
+
+    private void saveChunk(int chunkX, int chunkZ, @NotNull String dir) {
+        Path filepath = Path.of(dir + "/data/x" + chunkX + "z" + chunkZ + ".dat");
+        File file = filepath.toFile();
+        File directory = Path.of(dir + "/data").toFile();
+        if (!directory.exists()) {
+            //noinspection ResultOfMethodCallIgnored
+            directory.mkdirs();
+        }
+        try (DataOutputStream out = new DataOutputStream(new FileOutputStream(file))) {
+            Chunk chunk = getChunkIfProvided(chunkX, chunkZ);
+            for (int i = 0; i < chunk_width; i++) {
+                for (int j = 0; j < height; j++) {
+                    for (int k = 0; k < chunk_depth; k++) {
+                        @SuppressWarnings("ConstantConditions") Block block = chunk.getBlock(i, j, k);
+                        if (block != null) {
+                            out.writeInt(i);
+                            out.writeInt(j);
+                            out.writeInt(k);
+                            out.writeInt(Blocks.map.get(block));
+                        }
+                    }
+                }
+            }
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public int getWidth() {
@@ -78,8 +156,11 @@ public class World {
         return chunk;
     }
 
-    public @Nullable Chunk getChunkAt(float x, float z) {
-        return getChunk((int) (x / 16f), (int) (z / 16f));
+    public @Nullable Chunk getChunkIfProvided(int x, int z) {
+        if (x < 0 || x >= width || z < 0 || z >= depth) {
+            return null;
+        }
+        return chunks[x + z * width];
     }
 
     public void setBlock(int x, int y, int z, Block block) {
@@ -90,7 +171,7 @@ public class World {
     }
 
     public @Nullable Block getBlock(int x, int y, int z) {
-        Chunk chunk = getChunk(x / chunk_width, z / chunk_depth);
+        Chunk chunk = getChunkIfProvided(x / chunk_width, z / chunk_depth);
         if (chunk == null) {
             return null;
         }

@@ -24,6 +24,7 @@ public class MouseInput {
     private boolean in_window = false;
 
     private boolean left_pressed = false;
+    private boolean middle_pressed = false;
     private boolean right_pressed = false;
 
     private int scroll = 0;
@@ -37,6 +38,7 @@ public class MouseInput {
                         .y((float) yoffset);
                 nk_input_scroll(ctx, scroll);
             }
+            scroll += yoffset;
         });
         glfwSetCursorPosCallback(window.getWindowHandle(), (windowHandle, x_pos, y_pos) -> {
             curr_pos.x = x_pos;
@@ -44,12 +46,10 @@ public class MouseInput {
             nk_input_motion(ctx, (int) x_pos, (int) y_pos);
         });
         glfwSetCursorEnterCallback(window.getWindowHandle(), (windowHandle, entered) -> in_window = entered);
-        glfwSetScrollCallback(window.getWindowHandle(), (windowHandle, x_offset, y_offset) -> {
-            scroll += y_offset;
-        });
         glfwSetMouseButtonCallback(window.getWindowHandle(), (windowHandle, button, action, mode) -> {
             boolean pressed = action == GLFW_PRESS;
             left_pressed = button == GLFW_MOUSE_BUTTON_LEFT && pressed;
+            middle_pressed = button == GLFW_MOUSE_BUTTON_MIDDLE && pressed;
             right_pressed = button == GLFW_MOUSE_BUTTON_RIGHT && pressed;
             try (MemoryStack stack = stackPush()) {
                 DoubleBuffer cx = stack.mallocDouble(1);
@@ -101,6 +101,10 @@ public class MouseInput {
 
     public boolean isLeftButtonPressed() {
         return left_pressed;
+    }
+
+    public boolean isMiddlePressed() {
+        return middle_pressed;
     }
 
     public boolean isRightButtonPressed() {

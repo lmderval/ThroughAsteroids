@@ -3,4 +3,5 @@
 /.gradle/
 /build/
 /build/classes/java/main/
+/save/
 *.log

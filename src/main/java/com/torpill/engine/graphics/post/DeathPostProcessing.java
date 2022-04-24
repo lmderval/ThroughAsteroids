@@ -45,7 +45,7 @@ public class DeathPostProcessing {
         deathFilter.resizeRenderer(window.getWidth(), window.getHeight());
     }
 
-    public static void doPostProcessing(@NotNull Window window,int colourTexture){
+    public static void doPostProcessing(@NotNull Window window, int colourTexture){
         start();
         deathFilter.render(colourTexture);
         redFilter.render(deathFilter.getOutputTexture());
