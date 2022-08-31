@@ -6,21 +6,23 @@ import com.torpill.engine.graphics.lights.PointLight;
 import com.torpill.engine.graphics.lights.SpotLight;
 import com.torpill.engine.graphics.meshes.Mesh;
 import com.torpill.engine.graphics.meshes.Texture;
-import com.torpill.engine.graphics.post.DeathPostProcessing;
-import com.torpill.engine.graphics.post.MainPostProcessing;
+import com.torpill.engine.graphics.shaders.hud.HudShader;
 import com.torpill.engine.graphics.shaders.main.MainShader;
+import com.torpill.engine.hud.HudItem;
+import com.torpill.engine.hud.IHud;
 import com.torpill.engine.world.Chunk;
 import com.torpill.engine.world.World;
 import com.torpill.engine.world.blocks.Block;
 import com.torpill.engine.world.entities.Entity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 import org.joml.Vector4f;
 
+import static com.torpill.engine.graphics.meshes.Material.DEFAULT_COLOR;
 import static com.torpill.engine.graphics.shaders.main.MainShader.*;
-import static com.torpill.engine.world.blocks.Block.BLOCK_MESH;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Renderer {
@@ -36,6 +38,7 @@ public class Renderer {
     private final Matrix4f perspective_mat = new Matrix4f();
     private final Matrix4f curr_mat = new Matrix4f();
     private MainShader main;
+    private HudShader hudShader;
     private Mesh curr_mesh;
     private Texture curr_texture;
     private Texture curr_light_map;
@@ -46,7 +49,10 @@ public class Renderer {
 
     private void setupMain() throws Exception {
         main = new MainShader();
+        hudShader = new HudShader();
+
         main.setup();
+        hudShader.setup();
     }
 
     public void clear() {
@@ -69,7 +75,6 @@ public class Renderer {
         main.setUniform(UNI_LIGHT_MAP_SAMPLER, 1);
         main.setUniform(UNI_AMBIENT_LIGHT, ambient_light);
         main.setUniform(UNI_SPECULAR_POWER, SPECULAR_POWER);
-        main.setUniform(UNI_DEBUG_COLOR, DEBUG_COLOR);
 
         // Get a copy of the light object and transform its position to view coordinates
         PointLight curr_point_light = new PointLight(point_light);
@@ -110,28 +115,30 @@ public class Renderer {
         entity.recalculate(view_mat);
         main.setUniform(UNI_MODEL_VIEW, entity.getModelViewMat());
         main.setUniform(UNI_MATERIAL, curr_mesh.getMaterial());
+        main.setUniform(UNI_COLOR, entity.getColor());
         curr_mesh.preRender(true);
         curr_mesh.render();
         curr_mesh.postRender();
     }
 
-    private void preRenderBlocks() {
-        BLOCK_MESH.preRender(false);
+    private void preRenderBlocks(@NotNull Mesh block_mesh) {
+        block_mesh.preRender(false);
+        curr_mesh = block_mesh;
     }
 
-    public void renderBlock(@NotNull Block block, @NotNull Vector3f position, boolean selected, @NotNull Matrix4f view_mat) {
-        curr_mesh = block.getMesh();
+    public void renderBlock(@NotNull Vector3f position, boolean selected, @NotNull Matrix4f view_mat) {
         curr_texture = curr_mesh.bindTextureWithTest(curr_texture);
         curr_light_map = curr_mesh.bindLightMapWithTest(curr_light_map);
         transformation.setModelView(position, view_mat, curr_mat);
         main.setUniform(UNI_MODEL_VIEW, curr_mat);
         main.setUniform(UNI_MATERIAL, curr_mesh.getMaterial());
+        main.setUniform(UNI_COLOR, DEFAULT_COLOR);
         main.setUniform(UNI_SELECTED, selected);
         curr_mesh.render();
     }
 
     private void postRenderBlocks() {
-        BLOCK_MESH.postRender();
+        if (curr_mesh != null) curr_mesh.postRender();
         curr_mesh = null;
         curr_texture = null;
         curr_light_map = null;
@@ -146,7 +153,8 @@ public class Renderer {
         boolean render;
         int x0, z0;
 
-        preRenderBlocks();
+        curr_mesh = null;
+        int mesh_change = 0, block_render = 0;
         for (int i = 0; i < chunk.getWidth(); i++) {
             for (int j = 0; j < chunk.getHeight(); j++) {
                 for (int k = 0; k < chunk.getDepth(); k++) {
@@ -170,8 +178,12 @@ public class Renderer {
                         }
 
                         if (render) {
+                            if (curr_mesh != block.getMesh()) {
+                                postRenderBlocks();
+                                preRenderBlocks(block.getMesh());
+                            }
                             block_position.set(i + position.x, j, k + position.z);
-                            renderBlock(block, block_position, world.isSelected(x0, j, z0), view_mat);
+                            renderBlock(block_position, world.isSelected(x0, j, z0), view_mat);
                         }
                     }
                 }
@@ -232,6 +244,31 @@ public class Renderer {
                 renderEntity(entity, view_mat);
             }
         }
+    }
+
+    public void renderHud(@NotNull Window window, @Nullable IHud hud, @NotNull Vector3f light_direction) {
+        if (hud == null) return;
+
+        hudShader.bind();
+
+        hudShader.setUniform(HudShader.UNI_TEX_SAMPLER, 0);
+        hudShader.setUniform(HudShader.UNI_LIGHT_DIRECTION, light_direction);
+        transformation.setOrthogonal(window.getFramebufferWidth(), window.getFramebufferHeight(), Z_NEAR, Z_FAR, perspective_mat);
+        for (HudItem item : hud.getItems()) {
+            curr_mesh = item.getMesh();
+            // Set orthographic and model matrix for this HUD item
+            item.recalculate();
+            hudShader.setUniform(HudShader.UNI_PROJECTION, perspective_mat);
+            hudShader.setUniform(HudShader.UNI_MODEL, item.getModelMat());
+            hudShader.setUniform(HudShader.UNI_COLOR, item.getColor());
+            hudShader.setUniform(HudShader.UNI_IS_3D, item.is3D());
+            // Render the mesh for this HUD item
+            curr_mesh.preRender(true);
+            curr_mesh.render();
+            curr_mesh.postRender();
+        }
+
+        hudShader.unbind();
     }
 
     public void postRender() {

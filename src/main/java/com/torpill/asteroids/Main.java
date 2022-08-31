@@ -11,7 +11,9 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        GameEngine engine = new GameEngine("Through Asteroids", 1920, 1080, false, INSTANCE, "fonts/pocket.ttf");
+        int height = 1080;
+        int width = height * 16 / 9;
+        GameEngine engine = new GameEngine("Through Asteroids", width, height, false, INSTANCE, "fonts/pocket.ttf");
         engine.run();
     }
 }

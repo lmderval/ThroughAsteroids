@@ -3,27 +3,67 @@ package com.torpill.engine.world.blocks;
 import com.torpill.engine.graphics.meshes.Material;
 import com.torpill.engine.graphics.meshes.Mesh;
 import com.torpill.engine.loader.MeshCache;
+import com.torpill.engine.world.World;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
+import org.joml.Vector3i;
 
-public class Block {
+public abstract class Block {
 
-    public static Mesh BLOCK_MESH;
+    private static Mesh BLOCK_MESH;
 
     private final Mesh mesh;
 
+    private final Vector3f offset;
+    private final Vector3f dimension;
+
     public static void loadMesh() throws Exception {
-        BLOCK_MESH = MeshCache.getInstance().getStaticMeshes("models/block/block.obj", null)[0];
+        BLOCK_MESH = MeshCache.getInstance().getStaticMeshes("models/blocks/block.obj", null)[0];
+    }
+
+    protected Block(@NotNull Mesh mesh, @Nullable Material material, @NotNull Vector3f offset, @NotNull Vector3f dimension) {
+        this.mesh = new Mesh(mesh);
+        this.mesh.setMaterial(material);
+        this.offset = offset;
+        this.dimension = dimension;
     }
 
     public Block(Material material) {
-        mesh = new Mesh(BLOCK_MESH);
-        mesh.setMaterial(material);
+        this(BLOCK_MESH, material, new Vector3f(0f), new Vector3f(1f));
     }
+
+    public abstract void update(@NotNull World world, int x, int y, int z);
 
     public Mesh getMesh() {
         return mesh;
     }
 
-    public static enum Face {
+    public float offsetX() {
+        return offset.x();
+    }
+
+    public float offsetY() {
+        return offset.y();
+    }
+
+    public float offsetZ() {
+        return offset.z();
+    }
+
+    public float width() {
+        return dimension.x();
+    }
+
+    public float height() {
+        return dimension.y();
+    }
+
+    public float depth() {
+        return dimension.z();
+    }
+
+    public enum Face {
         NULL,
         TOP,
         BOTTOM,

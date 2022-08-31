@@ -1,6 +1,7 @@
 package com.torpill.engine.graphics.meshes;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL15;
 
 import java.nio.FloatBuffer;
@@ -78,11 +79,11 @@ public class Mesh {
         material = mesh.material;
     }
 
-    public Material getMaterial() {
+    public @Nullable Material getMaterial() {
         return material;
     }
 
-    public void setMaterial(Material material) {
+    public void setMaterial(@Nullable Material material) {
         this.material = material;
     }
 

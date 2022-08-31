@@ -3,11 +3,11 @@ package com.torpill.engine.world.entities;
 import com.torpill.engine.graphics.meshes.Mesh;
 import com.torpill.engine.graphics.Transformation;
 import com.torpill.engine.world.World;
+import com.torpill.engine.world.blocks.Block;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Intersectionf;
-import org.joml.Matrix3x2f;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
+import org.joml.*;
+
+import java.lang.Math;
 
 public abstract class Entity {
 
@@ -27,6 +27,8 @@ public abstract class Entity {
     protected final Vector3f rotation = new Vector3f();
     protected final Matrix3x2f box = new Matrix3x2f(0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f);
 
+    private final Vector4f color = new Vector4f(1f);
+
     private final Matrix4f model_view_mat = new Matrix4f();
 
     public Entity(@NotNull Mesh mesh, float mass) {
@@ -42,12 +44,43 @@ public abstract class Entity {
 
     public abstract void update(@NotNull World world);
 
+    protected boolean collision(@NotNull World world) {
+        int bx = (int) Math.floor(position.x + 0.5f);
+        int by = (int) Math.floor(position.y + 0.5f);
+        int bz = (int) Math.floor(position.z + 0.5f);
+        Block b;
+        for (int i = (int) -Math.ceil(box.m00 * scale); i <= (int) Math.ceil(box.m01 * scale); i++) {
+            for (int j = (int) -Math.ceil(box.m10 * scale); j <= (int) Math.ceil(box.m11 * scale); j++) {
+                for (int k = (int) -Math.ceil(box.m20 * scale); k <= (int) Math.ceil(box.m21 * scale); k++) {
+                    if ((b = world.getBlock(bx + i, by + j, bz + k)) != null) {
+                        float mx = bx + i - 0.5f + b.offsetX();
+                        float my = by + j - 0.5f + b.offsetY();
+                        float mz = bz + k - 0.5f + b.offsetZ();
+                        if (Intersectionf.testAabAab(
+                                position.x - box.m00 * scale, position.y - box.m10 * scale, position.z - box.m20 * scale,
+                                position.x + box.m01 * scale, position.y + box.m11 * scale, position.z + box.m21 * scale,
+                                mx, my, mz,
+                                mx + b.width(), my + b.height(), mz + b.depth()
+                        )) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public Mesh getMesh() {
         return mesh;
     }
 
     public Vector3f getPosition() {
         return position;
+    }
+
+    public void setPosition(@NotNull Vector3f position) {
+        this.position.set(position);
     }
 
     public void setPosition(float x, float y, float z) {
@@ -92,6 +125,14 @@ public abstract class Entity {
 
     public void setRotation(float x, float y, float z) {
         rotation.set(x, y, z);
+    }
+
+    public void setColor(float r, float g, float b, float a) {
+        color.set(r, g, b, a);
+    }
+
+    public Vector4f getColor() {
+        return color;
     }
 
     public void rotate(float rx, float ry, float rz) {

@@ -1,5 +1,6 @@
 package com.torpill.engine.graphics;
 
+import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -20,6 +21,10 @@ public class Camera {
         position.set(x, y, z);
     }
 
+    public void setPosition(@NotNull Vector3f position) {
+        this.position.set(position);
+    }
+
     public void move(float dx, float dy, float dz) {
         if (dz != 0) {
             position.x += (float) Math.sin(Math.toRadians(rotation.y)) * -1.0f * dz;
@@ -38,6 +43,10 @@ public class Camera {
 
     public void setRotation(float x, float y, float z) {
         rotation.set(x, y, z);
+    }
+
+    public void setRotation(@NotNull Vector3f rotation) {
+        this.rotation.set(rotation);
     }
 
     public void rotate(float rx, float ry, float rz) {

@@ -14,8 +14,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class World {
 
@@ -32,6 +34,8 @@ public class World {
     private final List<Entity> entities = new ArrayList<>();
 
     private final Vector3i selected = new Vector3i(-1);
+
+    private boolean terminated = false;
 
     public World(int width, int height, int depth, int chunk_width, int chunk_depth) {
         this.width = width;
@@ -116,6 +120,23 @@ public class World {
         }
     }
 
+    public void update() {
+        Chunk chunk;
+        for (Entity entity : entities) {
+            if (entity.isAlive()) {
+                entity.update(this);
+            }
+        }
+        removeAll(entity -> entity != player && !entity.isAlive());
+        for (int chunkX = 0; chunkX < width; chunkX++) {
+            for (int chunkZ = 0; chunkZ < depth; chunkZ++) {
+                if ((chunk = getChunkIfProvided(chunkX, chunkZ)) != null) {
+                    chunk.update(this, chunkX, chunkZ);
+                }
+            }
+        }
+    }
+
     public int getWidth() {
         return width;
     }
@@ -186,6 +207,10 @@ public class World {
         entities.add(entity);
     }
 
+    public void removeAll(@NotNull Predicate<? super Entity> filter) {
+        entities.removeIf(filter);
+    }
+
     public List<Entity> getEntities() {
         return entities;
     }
@@ -204,5 +229,17 @@ public class World {
 
     public boolean isSelected(@NotNull Vector3i vec3) {
         return isSelected(vec3.x, vec3.y, vec3.z);
+    }
+
+    public void start() {
+        terminated = false;
+    }
+
+    public void terminate() {
+        terminated = true;
+    }
+
+    public boolean isTerminated() {
+        return terminated;
     }
 }

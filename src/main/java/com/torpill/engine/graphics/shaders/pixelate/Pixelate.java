@@ -1,6 +1,8 @@
 package com.torpill.engine.graphics.shaders.pixelate;
 
+import com.torpill.engine.Window;
 import com.torpill.engine.graphics.post.ImageRenderer;
+import com.torpill.engine.graphics.shaders.blur.VerticalBlurShader;
 
 import static com.torpill.engine.graphics.shaders.pixelate.PixelateShader.*;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
@@ -15,6 +17,12 @@ public class Pixelate {
 
     public Pixelate() throws Exception {
         renderer = new ImageRenderer();
+        shader = new PixelateShader();
+        shader.setup();
+    }
+
+    public Pixelate(Window window, int width, int height) throws Exception {
+        renderer = new ImageRenderer(window, width, height);
         shader = new PixelateShader();
         shader.setup();
     }

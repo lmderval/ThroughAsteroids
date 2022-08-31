@@ -1,6 +1,7 @@
 package com.torpill.engine.world;
 
 import com.torpill.engine.world.blocks.Block;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Chunk {
@@ -41,5 +42,18 @@ public class Chunk {
             return null;
         }
         return blocks[x + y * width + z * width * height];
+    }
+
+    public void update(@NotNull World world, int chunkX, int chunkZ) {
+        Block block;
+        for (int x = 0; x < width; x ++) {
+            for (int y = 0; y < height; y ++) {
+                for (int z = 0; z < depth; z ++) {
+                    if ((block = blocks[x + y * width + z * width * height]) != null) {
+                        block.update(world, x + chunkX * width, y, z + chunkZ * depth);
+                    }
+                }
+            }
+        }
     }
 }

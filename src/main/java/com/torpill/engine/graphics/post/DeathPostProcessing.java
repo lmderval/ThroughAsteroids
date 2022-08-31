@@ -27,22 +27,22 @@ public class DeathPostProcessing {
 
     public static void init(@NotNull Window window) throws Exception {
         quad = RawLoader.load2DQuad(POSITIONS);
-        contrastChanger = new ContrastChanger(window, window.getWidth(), window.getHeight());
+        contrastChanger = new ContrastChanger();
         redFilter = new RedFilter(window, window.getWidth() / 2, window.getHeight() / 2);
         horizontalBlur = new HorizontalBlur(window, window.getWidth() / 5, window.getHeight() / 5);
         verticalBlur = new VerticalBlur(window, window.getWidth() / 5, window.getHeight() / 5);
         combineFilter = new CombineFilter(window, window.getWidth(), window.getHeight());
         deathFilter = new DeathFilter(window, window.getWidth(), window.getHeight());
-        pixelate = new Pixelate();
+        pixelate = new Pixelate(window, window.getWidth(), window.getHeight());
     }
 
     public static void resize(@NotNull Window window) {
-        contrastChanger.resizeRenderer(window.getWidth(), window.getHeight());
         redFilter.resizeRenderer(window.getWidth() / 2, window.getHeight() / 2);
         horizontalBlur.resizeRenderer(window.getWidth() / 5, window.getHeight() / 5);
         verticalBlur.resizeRenderer(window.getWidth() / 5, window.getHeight() / 5);
         combineFilter.resizeRenderer(window.getWidth(), window.getHeight());
         deathFilter.resizeRenderer(window.getWidth(), window.getHeight());
+        pixelate.resizeRenderer(window.getWidth(), window.getHeight());
     }
 
     public static void doPostProcessing(@NotNull Window window, int colourTexture){
@@ -51,9 +51,9 @@ public class DeathPostProcessing {
         redFilter.render(deathFilter.getOutputTexture());
         horizontalBlur.render(redFilter.getOutputTexture());
         verticalBlur.render(horizontalBlur.getOutputTexture());
-        combineFilter.render(deathFilter.getOutputTexture(), verticalBlur.getOutputTexture());
+        pixelate.render(verticalBlur.getOutputTexture(), window.getWidth(), window.getHeight());
+        combineFilter.render(deathFilter.getOutputTexture(), pixelate.getOutputTexture());
         contrastChanger.render(combineFilter.getOutputTexture());
-        pixelate.render(contrastChanger.getOutputTexture(), window.getWidth(), window.getHeight());
         end();
     }
 

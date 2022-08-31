@@ -3,6 +3,8 @@ package com.torpill.asteroids;
 import com.torpill.asteroids.gui.death.NkDeathScene;
 import com.torpill.asteroids.gui.pause.edit.NkEditPauseScene;
 import com.torpill.asteroids.gui.pause.game.NkGamePauseScene;
+import com.torpill.asteroids.gui.win.NkWinScene;
+import com.torpill.asteroids.hud.EditHud;
 import com.torpill.engine.IGameLogic;
 import com.torpill.engine.KeyboardInput;
 import com.torpill.engine.MouseInput;
@@ -16,10 +18,12 @@ import com.torpill.engine.graphics.post.DeathPostProcessing;
 import com.torpill.engine.graphics.post.FBO;
 import com.torpill.engine.graphics.post.MainPostProcessing;
 import com.torpill.engine.gui.Nuklear;
+import com.torpill.engine.hud.IHud;
 import com.torpill.engine.loader.MeshCache;
 import com.torpill.engine.world.World;
 import com.torpill.engine.world.blocks.Block;
 import com.torpill.engine.world.blocks.Blocks;
+import com.torpill.engine.world.entities.projectiles.EntityProjectile;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Intersectionf;
 import org.joml.Vector2f;
@@ -31,7 +35,7 @@ import static com.torpill.engine.graphics.post.FBO.DEPTH_RENDER_BUFFER;
 import static com.torpill.engine.world.blocks.Block.Face.*;
 import static java.lang.Float.POSITIVE_INFINITY;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL11.*;
 
 public class ThroughAsteroids implements IGameLogic {
 
@@ -52,17 +56,24 @@ public class ThroughAsteroids implements IGameLogic {
     //    private final DirectionalLight directional_light = DirectionalLight.NULL;
     private final Vector2f rotation = new Vector2f();
     private final Vector3i playerDirection = new Vector3i();
+
     private final NkEditPauseScene nkEditPause = new NkEditPauseScene();
     private final NkGamePauseScene nkGamePause = new NkGamePauseScene();
     private final NkDeathScene nkDeath = new NkDeathScene();
+    private final NkWinScene nkWin = new NkWinScene();
+
+    private final EditHud editHud = new EditHud();
+
     public GameState gameState = MENU;
     public GameState lastGameState = MENU;
     private boolean perspective = true;
     private FBO fbo;
+    private FBO hudFbo;
     private World world;
 
     private long tick = 0L;
     private long deathTick = 0L;
+    private long winTick = 0L;
     private int clickTick;
 
     private int currentBlock = 0;
@@ -71,11 +82,14 @@ public class ThroughAsteroids implements IGameLogic {
     public void init(@NotNull Window window) throws Exception {
         renderer.init();
         fbo = new FBO(window, window.getWidth(), window.getHeight(), DEPTH_RENDER_BUFFER);
+        hudFbo = new FBO(window, window.getWidth(), window.getHeight(), DEPTH_RENDER_BUFFER);
         MainPostProcessing.init(window);
         DeathPostProcessing.init(window);
 
         Blocks.load();
         MeshCache.load();
+
+        editHud.load();
 
         world = new World(64, 16, 64, 16, 16);
         edit(true);
@@ -84,11 +98,14 @@ public class ThroughAsteroids implements IGameLogic {
     @Override
     public void input(@NotNull Window window, @NotNull MouseInput mouse_input, @NotNull KeyboardInput keyboard_input) {
         direction.zero();
+        playerDirection.zero();
         if (keyboard_input.isPressed(GLFW_KEY_A)) {
             direction.x -= 1;
+            playerDirection.x += 1;
         }
         if (keyboard_input.isPressed(GLFW_KEY_D)) {
             direction.x += 1;
+            playerDirection.x -= 1;
         }
         if (keyboard_input.isPressed(GLFW_KEY_SPACE)) {
             direction.y += 1;
@@ -98,21 +115,10 @@ public class ThroughAsteroids implements IGameLogic {
         }
         if (keyboard_input.isPressed(GLFW_KEY_W)) {
             direction.z -= 1;
+            playerDirection.z += 1;
         }
         if (keyboard_input.isPressed(GLFW_KEY_S)) {
             direction.z += 1;
-        }
-        playerDirection.zero();
-        if (keyboard_input.isPressed(GLFW_KEY_LEFT)) {
-            playerDirection.x += 1;
-        }
-        if (keyboard_input.isPressed(GLFW_KEY_RIGHT)) {
-            playerDirection.x -= 1;
-        }
-        if (keyboard_input.isPressed(GLFW_KEY_UP)) {
-            playerDirection.z += 1;
-        }
-        if (keyboard_input.isPressed(GLFW_KEY_DOWN)) {
             playerDirection.z -= 1;
         }
     }
@@ -138,11 +144,19 @@ public class ThroughAsteroids implements IGameLogic {
                 world.setSelected(new Vector3i(-1));
 
                 world.getPlayer().control(-playerDirection.x);
-                world.getPlayer().update(world);
+                if (mouse_input.isLeftButtonPressed()) {
+                    world.getPlayer().throwLaser(world);
+                }
+                world.update();
 
                 Vector3f pos = world.getPlayer().getPosition();
                 float dy = 10f;
                 camera.setPosition(pos.x, pos.y + dy, pos.z + dy / (float) Math.tan(Math.toRadians(camera.getRotation().x)));
+
+                if (world.isTerminated()) {
+                    gameState = WIN;
+                    winTick = tick;
+                }
 
                 if (!world.getPlayer().isAlive()) {
                     gameState = END;
@@ -155,6 +169,9 @@ public class ThroughAsteroids implements IGameLogic {
 
                 tick++;
                 break;
+            case WIN:
+                world.getPlayer().resetControl();
+                world.update();
             case END:
                 window.showCursor();
 
@@ -185,6 +202,7 @@ public class ThroughAsteroids implements IGameLogic {
                 currentBlock %= Blocks.blocks.size();
                 if (currentBlock < 0) currentBlock += Blocks.blocks.size();
                 mouse_input.setScroll(0);
+                editHud.setCurrentBlock(currentBlock);
 
                 Vector3i selected = cameraSelection();
                 world.setSelected(selected);
@@ -240,6 +258,9 @@ public class ThroughAsteroids implements IGameLogic {
         if (gameState == PAUSE) {
             if (lastGameState == PLAY) nkGamePause.update(window, nk);
             else if (lastGameState == EDIT) nkEditPause.update(window, nk);
+        } else if (gameState == WIN) {
+            nkWin.setOpacity(tick - winTick);
+            nkWin.update(window, nk);
         } else if (gameState == END) {
             nkDeath.setOpacity(tick - deathTick);
             nkDeath.update(window, nk);
@@ -251,25 +272,34 @@ public class ThroughAsteroids implements IGameLogic {
         if (window.isResized()) {
             glViewport(0, 0, window.getFramebufferWidth(), window.getFramebufferHeight());
             fbo.recreate(window.getWidth(), window.getHeight(), DEPTH_RENDER_BUFFER);
+            hudFbo.recreate(window.getWidth(), window.getHeight(), DEPTH_RENDER_BUFFER);
             MainPostProcessing.resize(window);
             DeathPostProcessing.resize(window);
+            editHud.resize(window);
             window.setResized(false);
         }
-        window.setClearColor(15, 15, 19, 255);
         {
             // Nuklear rendering
         }
         if (gameState != MENU) {
             // World rendering
             fbo.bindFrameBuffer();
+            window.setClearColor(15, 15, 19, 255);
             renderer.preRender(window, camera, perspective, ambient_light, point_light, spot_light, directional_light);
             renderer.renderWorld(world, camera);
             renderer.postRender();
             fbo.unbindFrameBuffer();
-            if (gameState != END) {
-                MainPostProcessing.doPostProcessing(window, fbo.getColourTexture());
-            } else {
+            hudFbo.bindFrameBuffer();
+            window.setClearColor(0, 0, 0, 0);
+            renderer.clear();
+            if (gameState == EDIT) {
+                renderer.renderHud(window, editHud, new Vector3f(-1f, -3f, -5f));
+            }
+            hudFbo.unbindFrameBuffer();
+            if (gameState == END) {
                 DeathPostProcessing.doPostProcessing(window, fbo.getColourTexture());
+            } else {
+                MainPostProcessing.doPostProcessing(window, fbo.getColourTexture(), hudFbo.getColourTexture());
             }
         }
     }
@@ -279,6 +309,7 @@ public class ThroughAsteroids implements IGameLogic {
         MainPostProcessing.cleanup();
         DeathPostProcessing.cleanup();
         fbo.cleanup();
+        hudFbo.cleanup();
         renderer.cleanup();
     }
 
@@ -504,25 +535,34 @@ public class ThroughAsteroids implements IGameLogic {
 
     public void edit(boolean reload) {
         if (reload) world.load("save/level1");
+        world.removeAll(entity -> entity instanceof EntityProjectile);
         gameState = EDIT;
         perspective = true;
 
-        world.getPlayer().setPosition(2f, -0.3f, 11f);
+        world.getPlayer().setPosition(2f, 0.0f, 11f);
         world.getPlayer().setRotation(0f, 90f, 0f);
+        camera.setPosition(world.getPlayer().getPosition());
+        camera.move(-6f, 3f, 0f);
+        camera.setRotation(world.getPlayer().getRotation());
+
+        camera.updateViewMat();
     }
 
     public void play(boolean reload) {
         if (reload) world.load("save/level1");
+        world.removeAll(entity -> entity instanceof EntityProjectile);
         gameState = PLAY;
         perspective = false;
 
         world.getPlayer().setAlive(true);
         world.getPlayer().resetControl();
-        world.getPlayer().setPosition(2f, -0.3f, 11f);
+        world.getPlayer().setPosition(2f, 0.0f, 11f);
         world.getPlayer().setRotation(0f, 90f, 0f);
 
         camera.setRotation(70f, 0f, 0f);
         camera.updateViewMat();
+
+        world.start();
     }
 
     public void pause() {

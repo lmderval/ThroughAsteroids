@@ -16,7 +16,7 @@ public class Transformation {
     public void setOrthogonal(float width, float height, float z_near, float z_far, @NotNull Matrix4f perspective) {
         perspective.identity()
                 .orthoSymmetric(width, height, z_near, z_far, perspective)
-                .scale(height / 720f * 18f);
+                .scale(height / 720f * 22.1f);
     }
 
     public void setWorld(@NotNull Vector3f position, float scale, @NotNull Vector3f rotation, @NotNull Matrix4f world) {

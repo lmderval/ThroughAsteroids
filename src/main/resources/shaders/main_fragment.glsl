@@ -46,12 +46,12 @@ uniform sampler2D tex_sampler;
 uniform sampler2D light_map_sampler;
 uniform vec3 ambient_light;
 uniform float specular_power;
+uniform vec4 color;
 uniform int selected;
 uniform Material material;
 uniform PointLight point_light;
 uniform SpotLight spot_light;
 uniform DirectionalLight directional_light;
-uniform vec4 debug_color;
 
 vec4 ambient_color;
 vec4 diffuse_color;
@@ -126,7 +126,7 @@ void main() {
     } else {
         out_color += emissive_color * material.emissivity;
     }
-    out_color *= debug_color;
+    out_color *= color;
     if (selected == 1) {
         out_color *= vec4(0.5, 0.5, 0.5, 1.0);
     }

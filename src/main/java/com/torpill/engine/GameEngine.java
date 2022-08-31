@@ -4,6 +4,7 @@ import com.torpill.engine.gui.Nuklear;
 import com.torpill.engine.loader.MeshCache;
 import com.torpill.engine.loader.TextureCache;
 import com.torpill.engine.world.blocks.Block;
+import com.torpill.engine.world.blocks.HalfSlab;
 import org.jetbrains.annotations.NotNull;
 
 import static java.lang.Thread.sleep;
@@ -45,6 +46,7 @@ public class GameEngine {
         mouse_input.init(window, nk);
         keyboard_input.init(window, nk);
         Block.loadMesh();
+        HalfSlab.loadMesh();
         game_logic.init(window);
     }
 
