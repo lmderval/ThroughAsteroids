@@ -2,21 +2,21 @@ package com.torpill.engine;
 
 import com.torpill.engine.gui.Nuklear;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.glfw.*;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.nuklear.NkContext;
-import org.lwjgl.opengl.*;
-import org.lwjgl.system.*;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.system.MemoryStack;
 
-import java.nio.*;
+import java.nio.IntBuffer;
 import java.util.Objects;
 
-import static org.lwjgl.glfw.Callbacks.*;
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.nuklear.Nuklear.*;
+import static org.lwjgl.nuklear.Nuklear.nk_input_unicode;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
 
@@ -72,7 +72,6 @@ public class Window {
         GL.createCapabilities();
 
         NkContext ctx = nk.init(window);
-
 
 
         glfwSetCharCallback(window, (window, codepoint) -> nk_input_unicode(ctx, codepoint));

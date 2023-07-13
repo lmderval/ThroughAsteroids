@@ -5,8 +5,6 @@ import com.torpill.engine.world.entities.projectiles.EntityLaser;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3x2f;
 
-import java.util.Arrays;
-
 import static com.torpill.engine.loader.MeshCache.SHIP;
 
 public class EntityPlayer extends Entity {

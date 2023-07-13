@@ -1,13 +1,12 @@
 package com.torpill.nuklear;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.nuklear.*;
-import org.lwjgl.system.MemoryStack;
+import org.lwjgl.nuklear.NkContext;
+import org.lwjgl.nuklear.NkRect;
 
 import java.nio.IntBuffer;
 
 import static org.lwjgl.nuklear.Nuklear.*;
-import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class NkTest {
 

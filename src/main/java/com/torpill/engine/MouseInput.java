@@ -12,7 +12,6 @@ import java.nio.DoubleBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.nuklear.Nuklear.*;
-import static org.lwjgl.nuklear.Nuklear.nk_input_button;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class MouseInput {

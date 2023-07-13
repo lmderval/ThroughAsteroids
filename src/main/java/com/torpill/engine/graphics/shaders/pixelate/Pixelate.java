@@ -2,7 +2,6 @@ package com.torpill.engine.graphics.shaders.pixelate;
 
 import com.torpill.engine.Window;
 import com.torpill.engine.graphics.post.ImageRenderer;
-import com.torpill.engine.graphics.shaders.blur.VerticalBlurShader;
 
 import static com.torpill.engine.graphics.shaders.pixelate.PixelateShader.*;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;

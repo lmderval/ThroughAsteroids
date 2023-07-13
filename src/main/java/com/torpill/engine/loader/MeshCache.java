@@ -4,12 +4,9 @@ import com.torpill.engine.graphics.meshes.Material;
 import com.torpill.engine.graphics.meshes.Mesh;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector4f;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.torpill.engine.graphics.meshes.Material.DEFAULT_COLOR;
 
 public class MeshCache {
 

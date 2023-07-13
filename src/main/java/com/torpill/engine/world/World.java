@@ -4,7 +4,6 @@ import com.torpill.engine.world.blocks.Block;
 import com.torpill.engine.world.blocks.Blocks;
 import com.torpill.engine.world.entities.Entity;
 import com.torpill.engine.world.entities.EntityPlayer;
-import com.torpill.engine.world.entities.PhysicsEntity;
 import com.torpill.engine.world.entities.Shooter;
 import com.torpill.engine.world.entities.projectiles.EntityProjectile;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +18,6 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class World {
 

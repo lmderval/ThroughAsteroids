@@ -10,7 +10,7 @@ class Timer {
         lastLoopTime = getTime();
     }
 
-    public double getTime(){
+    public double getTime() {
         return nanoTime() / 1_000_000_000.0;
     }
 

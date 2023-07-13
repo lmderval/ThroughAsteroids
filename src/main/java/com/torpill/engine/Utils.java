@@ -1,9 +1,11 @@
 package com.torpill.engine;
 
-import org.joml.Matrix3x2f;
 import org.lwjgl.BufferUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -57,8 +59,8 @@ public class Utils {
         Path path = Paths.get(resource);
         if (Files.isReadable(path)) {
             try (SeekableByteChannel fc = Files.newByteChannel(path)) {
-                buffer = BufferUtils.createByteBuffer((int)fc.size() + 1);
-                while (fc.read(buffer) != -1);
+                buffer = BufferUtils.createByteBuffer((int) fc.size() + 1);
+                while (fc.read(buffer) != -1) ;
             }
         } else {
             try (
@@ -85,7 +87,6 @@ public class Utils {
         buffer.flip();
         return memSlice(buffer);
     }
-
 
 
     public static class Box {

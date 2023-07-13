@@ -4,7 +4,8 @@ import com.torpill.engine.Window;
 import com.torpill.engine.gui.Nuklear;
 import com.torpill.engine.gui.NuklearScene;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.nuklear.*;
+import org.lwjgl.nuklear.NkColor;
+import org.lwjgl.nuklear.NkContext;
 
 public class NkDeathScene implements NuklearScene {
 

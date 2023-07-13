@@ -7,8 +7,6 @@ import com.torpill.engine.world.blocks.Block;
 import com.torpill.engine.world.blocks.HalfSlab;
 import org.jetbrains.annotations.NotNull;
 
-import static java.lang.Thread.sleep;
-
 public class GameEngine {
 
     private static final int TARGET_UPS = 30;
@@ -65,7 +63,7 @@ public class GameEngine {
                 accumulator -= interval;
             }
             render();
-            frames ++;
+            frames++;
             double diff = timer.getTime() - fps_counter;
             if (diff > 1.0) {
                 System.out.println((int) (frames / diff) + " FPS");
@@ -97,7 +95,7 @@ public class GameEngine {
     private void sync() {
         float loopSlot = 1f / TARGET_FPS;
         double endTime = timer.getLastLoopTime() + loopSlot;
-        while (timer.getTime() < endTime);
+        while (timer.getTime() < endTime) ;
     }
 
     private void cleanup() {

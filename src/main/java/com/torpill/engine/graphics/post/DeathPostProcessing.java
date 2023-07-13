@@ -2,20 +2,19 @@ package com.torpill.engine.graphics.post;
 
 import com.torpill.engine.Window;
 import com.torpill.engine.graphics.meshes.Mesh2D;
-import com.torpill.engine.graphics.shaders.bloom.BrightFilter;
 import com.torpill.engine.graphics.shaders.bloom.CombineFilter;
 import com.torpill.engine.graphics.shaders.bloom.RedFilter;
 import com.torpill.engine.graphics.shaders.blur.HorizontalBlur;
 import com.torpill.engine.graphics.shaders.blur.VerticalBlur;
 import com.torpill.engine.graphics.shaders.contrast.ContrastChanger;
-import com.torpill.engine.graphics.shaders.pixelate.Pixelate;
 import com.torpill.engine.graphics.shaders.death.DeathFilter;
+import com.torpill.engine.graphics.shaders.pixelate.Pixelate;
 import com.torpill.engine.loader.RawLoader;
 import org.jetbrains.annotations.NotNull;
 
 public class DeathPostProcessing {
 
-    private static final float[] POSITIONS = { 1, 1, -1, 1, -1, -1, 1, -1 };
+    private static final float[] POSITIONS = {1, 1, -1, 1, -1, -1, 1, -1};
     private static Mesh2D quad;
     private static ContrastChanger contrastChanger;
     private static RedFilter redFilter;
@@ -45,7 +44,7 @@ public class DeathPostProcessing {
         pixelate.resizeRenderer(window.getWidth(), window.getHeight());
     }
 
-    public static void doPostProcessing(@NotNull Window window, int colourTexture){
+    public static void doPostProcessing(@NotNull Window window, int colourTexture) {
         start();
         deathFilter.render(colourTexture);
         redFilter.render(deathFilter.getOutputTexture());
@@ -57,7 +56,7 @@ public class DeathPostProcessing {
         end();
     }
 
-    public static void cleanup(){
+    public static void cleanup() {
         contrastChanger.cleanup();
         redFilter.cleanup();
         horizontalBlur.cleanup();
@@ -67,11 +66,11 @@ public class DeathPostProcessing {
         pixelate.cleanup();
     }
 
-    private static void start(){
+    private static void start() {
         quad.preRender();
     }
 
-    private static void end(){
+    private static void end() {
         quad.postRender();
     }
 

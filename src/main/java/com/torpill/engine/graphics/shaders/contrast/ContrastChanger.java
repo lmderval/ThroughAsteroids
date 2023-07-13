@@ -40,7 +40,7 @@ public class ContrastChanger {
         shader.unbind();
     }
 
-    public int getOutputTexture(){
+    public int getOutputTexture() {
         return renderer.getOutputTexture();
     }
 

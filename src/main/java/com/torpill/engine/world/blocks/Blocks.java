@@ -62,7 +62,7 @@ public class Blocks {
 
     public static void genMap() {
         map = new HashMap<>();
-        for (int i = 0; i < Blocks.blocks.size(); i ++) {
+        for (int i = 0; i < Blocks.blocks.size(); i++) {
             map.put(Blocks.blocks.get(i), i);
         }
     }

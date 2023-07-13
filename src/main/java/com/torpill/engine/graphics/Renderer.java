@@ -18,9 +18,10 @@ import com.torpill.engine.world.blocks.Block;
 import com.torpill.engine.world.entities.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.*;
-
-import java.lang.Math;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector3i;
+import org.joml.Vector4f;
 
 import static com.torpill.engine.graphics.meshes.Material.DEFAULT_COLOR;
 import static com.torpill.engine.graphics.shaders.main.MainShader.*;

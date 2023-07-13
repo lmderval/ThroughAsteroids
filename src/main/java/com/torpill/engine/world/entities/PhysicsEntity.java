@@ -1,10 +1,8 @@
 package com.torpill.engine.world.entities;
 
-import com.torpill.asteroids.ThroughAsteroids;
 import com.torpill.engine.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Intersectionf;
-import org.joml.Matrix3f;
 import org.joml.Matrix3x2f;
 import org.joml.Vector3f;
 
@@ -56,9 +54,9 @@ public class PhysicsEntity extends Entity {
         int by = (int) Math.floor(position.y + 0.5f);
         int bz = (int) Math.floor(position.z + 0.5f);
         boolean collision = false;
-        for (int i = (int) -Math.ceil(box.m00 * scale); i <= (int) Math.ceil(box.m01 * scale); i ++) {
-            for (int j = (int) -Math.ceil(box.m10 * scale); j <= (int) Math.ceil(box.m11 * scale); j ++) {
-                for (int k = (int) -Math.ceil(box.m20 * scale); k <= (int) Math.ceil(box.m21 * scale); k ++) {
+        for (int i = (int) -Math.ceil(box.m00 * scale); i <= (int) Math.ceil(box.m01 * scale); i++) {
+            for (int j = (int) -Math.ceil(box.m10 * scale); j <= (int) Math.ceil(box.m11 * scale); j++) {
+                for (int k = (int) -Math.ceil(box.m20 * scale); k <= (int) Math.ceil(box.m21 * scale); k++) {
                     if ( /* i * i + j * j + k * k <= 1 && */ world.getBlock(bx + i, by + j, bz + k) != null) {
                         if (Intersectionf.testAabAab(
                                 position.x - box.m00 * scale, position.y - box.m10 * scale, position.z - box.m20 * scale,

@@ -39,7 +39,7 @@ public class EditHud implements IHud {
 
     @Override
     public void resize(@NotNull Window window) {
-        for (int i = 0; i < blocks.length; i ++) {
+        for (int i = 0; i < blocks.length; i++) {
             blocks[i].setPosition(7f * (i - blocks.length / 2f) / 5f, -7f);
         }
     }

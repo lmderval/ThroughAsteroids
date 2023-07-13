@@ -2,9 +2,9 @@ package com.torpill.engine.graphics.shaders;
 
 import com.torpill.engine.Utils;
 import com.torpill.engine.graphics.lights.DirectionalLight;
-import com.torpill.engine.graphics.meshes.Material;
 import com.torpill.engine.graphics.lights.PointLight;
 import com.torpill.engine.graphics.lights.SpotLight;
+import com.torpill.engine.graphics.meshes.Material;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -15,7 +15,29 @@ import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
+import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
+import static org.lwjgl.opengl.GL20.GL_LINK_STATUS;
+import static org.lwjgl.opengl.GL20.GL_VALIDATE_STATUS;
+import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
+import static org.lwjgl.opengl.GL20.glAttachShader;
+import static org.lwjgl.opengl.GL20.glCompileShader;
+import static org.lwjgl.opengl.GL20.glCreateProgram;
+import static org.lwjgl.opengl.GL20.glCreateShader;
+import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
+import static org.lwjgl.opengl.GL20.glGetProgrami;
+import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
+import static org.lwjgl.opengl.GL20.glGetShaderi;
+import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glLinkProgram;
+import static org.lwjgl.opengl.GL20.glShaderSource;
+import static org.lwjgl.opengl.GL20.glUniform1f;
+import static org.lwjgl.opengl.GL20.glUniform1i;
+import static org.lwjgl.opengl.GL20.glUniform3f;
+import static org.lwjgl.opengl.GL20.glUniform4f;
+import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
+import static org.lwjgl.opengl.GL20.glUseProgram;
+import static org.lwjgl.opengl.GL20.glValidateProgram;
 import static org.lwjgl.opengl.GL20C.glDeleteProgram;
 import static org.lwjgl.opengl.GL20C.glDeleteShader;
 import static org.lwjgl.opengl.GL20C.glDetachShader;
@@ -179,7 +201,7 @@ public abstract class ShaderProgram {
     }
 
     public void setUniform(@NotNull String uniform, @NotNull PointLight light) {
-        setUniform(uniform + ".color", light.getColor() );
+        setUniform(uniform + ".color", light.getColor());
         setUniform(uniform + ".position", light.getPosition());
         setUniform(uniform + ".intensity", light.getIntensity());
         PointLight.Attenuation att = light.getAttenuation();

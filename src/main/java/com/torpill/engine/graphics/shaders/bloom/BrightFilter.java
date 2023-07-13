@@ -27,7 +27,7 @@ public class BrightFilter {
 
     public void render(int texture) {
         shader.bind();
-		shader.setUniform(UNI_TEX_SAMPLER, 0);
+        shader.setUniform(UNI_TEX_SAMPLER, 0);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
         renderer.renderQuad();
@@ -35,7 +35,7 @@ public class BrightFilter {
     }
 
     public int getOutputTexture() {
-		return renderer.getOutputTexture();
+        return renderer.getOutputTexture();
     }
 
     public void cleanup() {

@@ -5,15 +5,21 @@ package com.torpill.nuklear;
  * License terms: https://www.lwjgl.org/license
  */
 
-import org.lwjgl.nuklear.*;
-import org.lwjgl.system.*;
+import org.lwjgl.nuklear.NkContext;
+import org.lwjgl.nuklear.NkPluginFilter;
+import org.lwjgl.nuklear.NkRect;
+import org.lwjgl.nuklear.Nuklear;
+import org.lwjgl.system.MemoryStack;
 
-import java.nio.*;
-import java.text.*;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
 
 import static org.lwjgl.nuklear.Nuklear.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.system.MemoryUtil.memASCII;
 
 /**
  * Java port of

@@ -11,7 +11,7 @@ public class Chunk {
     private final int depth;
     private final Block[] blocks;
 
-    public Chunk(int width,  int height, int depth) {
+    public Chunk(int width, int height, int depth) {
         this.width = width;
         this.height = height;
         this.depth = depth;
@@ -46,9 +46,9 @@ public class Chunk {
 
     public void update(@NotNull World world, int chunkX, int chunkZ) {
         Block block;
-        for (int x = 0; x < width; x ++) {
-            for (int y = 0; y < height; y ++) {
-                for (int z = 0; z < depth; z ++) {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                for (int z = 0; z < depth; z++) {
                     if ((block = blocks[x + y * width + z * width * height]) != null) {
                         block.update(world, x + chunkX * width, y, z + chunkZ * depth);
                     }

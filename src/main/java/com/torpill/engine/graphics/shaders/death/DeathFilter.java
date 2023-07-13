@@ -31,7 +31,7 @@ public class DeathFilter {
         renderer.recreateFBO(width, height);
     }
 
-    public void render(int texture){
+    public void render(int texture) {
         shader.bind();
         shader.setUniform(UNI_TEX_SAMPLER, 0);
         glActiveTexture(GL_TEXTURE0);
@@ -40,11 +40,11 @@ public class DeathFilter {
         shader.unbind();
     }
 
-    public int getOutputTexture(){
+    public int getOutputTexture() {
         return renderer.getOutputTexture();
     }
 
-    public void cleanup(){
+    public void cleanup() {
         renderer.cleanup();
         shader.cleanup();
     }

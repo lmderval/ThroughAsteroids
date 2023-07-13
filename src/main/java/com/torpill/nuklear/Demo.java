@@ -5,14 +5,14 @@ package com.torpill.nuklear;
  * License terms: https://www.lwjgl.org/license
  */
 
-import org.lwjgl.*;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.nuklear.*;
-import org.lwjgl.system.*;
+import org.lwjgl.system.MemoryStack;
 
-import java.nio.*;
+import java.nio.IntBuffer;
 
 import static org.lwjgl.nuklear.Nuklear.*;
-import static org.lwjgl.system.MemoryStack.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
 
 /**
  * Java port of

@@ -4,20 +4,20 @@ import com.torpill.engine.graphics.shaders.ShaderProgram;
 
 public class CombineShader extends ShaderProgram {
 
-	public static final String UNI_COLOR_TEX_SAMPLER = "color_tex_sampler";
-	public static final String UNI_HIGHLIGHT_TEX_SAMPLER = "highlight_tex_sampler";
-	
-	public CombineShader() throws Exception {
-		super("simple", "combine");
-	}
+    public static final String UNI_COLOR_TEX_SAMPLER = "color_tex_sampler";
+    public static final String UNI_HIGHLIGHT_TEX_SAMPLER = "highlight_tex_sampler";
 
-	@Override
-	public void setup() throws Exception {
-		createVertexShader();
-		createFragmentShader();
-		link();
+    public CombineShader() throws Exception {
+        super("simple", "combine");
+    }
 
-		createUniform(UNI_COLOR_TEX_SAMPLER);
-		createUniform(UNI_HIGHLIGHT_TEX_SAMPLER);
-	}
+    @Override
+    public void setup() throws Exception {
+        createVertexShader();
+        createFragmentShader();
+        link();
+
+        createUniform(UNI_COLOR_TEX_SAMPLER);
+        createUniform(UNI_HIGHLIGHT_TEX_SAMPLER);
+    }
 }

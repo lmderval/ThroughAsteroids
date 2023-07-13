@@ -12,39 +12,39 @@ import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 
 public class VerticalBlur {
-	
-	private final ImageRenderer renderer;
-	private final VerticalBlurShader shader;
 
-	private final float targetFboHeight;
-	
-	public VerticalBlur(@NotNull Window window, int width, int height) throws Exception {
-		renderer = new ImageRenderer(window, width, height);
-		shader = new VerticalBlurShader();
-		shader.setup();
-		this.targetFboHeight = height;
-	}
+    private final ImageRenderer renderer;
+    private final VerticalBlurShader shader;
 
-	public void resizeRenderer(int width, int height) {
-		renderer.recreateFBO(width, height);
-	}
-	
-	public void render(int texture){
-		shader.bind();
-		shader.setUniform(UNI_TEX_SAMPLER, 0);
-		shader.setUniform(UNI_TARGET_HEIGHT, targetFboHeight);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		renderer.renderQuad();
-		shader.unbind();
-	}
-	
-	public int getOutputTexture(){
-		return renderer.getOutputTexture();
-	}
-	
-	public void cleanup(){
-		renderer.cleanup();
-		shader.cleanup();
-	}
+    private final float targetFboHeight;
+
+    public VerticalBlur(@NotNull Window window, int width, int height) throws Exception {
+        renderer = new ImageRenderer(window, width, height);
+        shader = new VerticalBlurShader();
+        shader.setup();
+        this.targetFboHeight = height;
+    }
+
+    public void resizeRenderer(int width, int height) {
+        renderer.recreateFBO(width, height);
+    }
+
+    public void render(int texture) {
+        shader.bind();
+        shader.setUniform(UNI_TEX_SAMPLER, 0);
+        shader.setUniform(UNI_TARGET_HEIGHT, targetFboHeight);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        renderer.renderQuad();
+        shader.unbind();
+    }
+
+    public int getOutputTexture() {
+        return renderer.getOutputTexture();
+    }
+
+    public void cleanup() {
+        renderer.cleanup();
+        shader.cleanup();
+    }
 }

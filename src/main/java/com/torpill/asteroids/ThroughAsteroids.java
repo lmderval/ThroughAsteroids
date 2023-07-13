@@ -18,7 +18,6 @@ import com.torpill.engine.graphics.post.DeathPostProcessing;
 import com.torpill.engine.graphics.post.FBO;
 import com.torpill.engine.graphics.post.MainPostProcessing;
 import com.torpill.engine.gui.Nuklear;
-import com.torpill.engine.hud.IHud;
 import com.torpill.engine.loader.MeshCache;
 import com.torpill.engine.world.World;
 import com.torpill.engine.world.blocks.Block;
@@ -37,7 +36,7 @@ import static com.torpill.engine.graphics.post.FBO.DEPTH_RENDER_BUFFER;
 import static com.torpill.engine.world.blocks.Block.Face.*;
 import static java.lang.Float.POSITIVE_INFINITY;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.glViewport;
 
 public class ThroughAsteroids implements IGameLogic {
 

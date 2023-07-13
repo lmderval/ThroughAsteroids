@@ -7,11 +7,11 @@ out vec2 frag_textures[11];
 uniform float target_width;
 
 void main(){
-	gl_Position = vec4(position, 0.0, 1.0);
-	vec2 centerTexCoords = position * 0.5 + 0.5;
-	float pixelSize = 1.0 / target_width;
+    gl_Position = vec4(position, 0.0, 1.0);
+    vec2 centerTexCoords = position * 0.5 + 0.5;
+    float pixelSize = 1.0 / target_width;
 
-	for (int i = -5; i <= 5; i ++) {
-		frag_textures[i + 5] = centerTexCoords + vec2(pixelSize * i, 0.0);
-	}
+    for (int i = -5; i <= 5; i ++) {
+        frag_textures[i + 5] = centerTexCoords + vec2(pixelSize * i, 0.0);
+    }
 }
