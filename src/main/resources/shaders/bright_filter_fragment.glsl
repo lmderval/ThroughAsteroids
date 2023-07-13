@@ -11,6 +11,8 @@ void main() {
     float brightness = color.r * 0.2126 + color.g * 0.7152 + color.b * 0.0722;
     if (brightness > 0.6) {
         out_color = color * brightness * brightness;
+    } else if (color.r > 0.9){
+        out_color = color * 0.7;
     } else {
         out_color = vec4(0.0);
     }

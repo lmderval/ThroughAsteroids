@@ -1,5 +1,6 @@
 package com.torpill.engine.world.blocks;
 
+import com.torpill.engine.Utils;
 import com.torpill.engine.graphics.meshes.Material;
 import com.torpill.engine.graphics.meshes.Mesh;
 import com.torpill.engine.loader.MeshCache;
@@ -61,6 +62,18 @@ public abstract class Block {
 
     public float depth() {
         return dimension.z();
+    }
+
+    public Utils.Box getBox(int i, int j, int k) {
+        return new Utils.Box(
+                i - width() / 2 + offsetX(), j - height() / 2 + offsetY(), k - depth() / 2 + offsetZ(),
+                width(), height(), depth(),
+                0f, 0f, 0f
+        );
+    }
+
+    public Utils.Box getBox(@NotNull Vector3i coord) {
+        return getBox(coord.x, coord.y, coord.z);
     }
 
     public enum Face {

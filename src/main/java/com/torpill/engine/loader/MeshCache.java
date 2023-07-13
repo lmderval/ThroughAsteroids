@@ -16,6 +16,7 @@ public class MeshCache {
     private static MeshCache INSTANCE;
 
     public static Mesh SHIP;
+    public static Mesh TOWER;
     public static Mesh LASER;
 
     public static Mesh HUD_CROSS;
@@ -25,9 +26,11 @@ public class MeshCache {
         SHIP.getMaterial().setTexture(TextureCache.getInstance().getTexture("textures/entities/ship.png"));
         SHIP.getMaterial().setLightMap(TextureCache.getInstance().getTexture("textures/lights/entities/ship.png"));
 
-        LASER = MeshCache.getInstance().getStaticMeshes("models/entities/ship.obj", "textures/entities")[0];
-        LASER.getMaterial().setTexture(TextureCache.getInstance().getTexture("textures/entities/ship.png"));
-        LASER.getMaterial().setLightMap(TextureCache.getInstance().getTexture("textures/lights/entities/ship.png"));
+        TOWER = MeshCache.getInstance().getStaticMeshes("models/entities/tower.obj", "textures/entities")[0];
+        TOWER.getMaterial().setTexture(TextureCache.getInstance().getTexture("textures/entities/tower.png"));
+        TOWER.getMaterial().setLightMap(TextureCache.getInstance().getTexture("textures/lights/entities/tower.png"));
+
+        LASER = MeshCache.getInstance().getStaticMeshes("models/entities/laser.obj", "textures/entities")[0];
 
         HUD_CROSS = MeshCache.getInstance().getStaticMeshes("models/hud/cross.obj", null)[0];
         Material crossMat = new Material(0f);

@@ -1,5 +1,6 @@
 package com.torpill.engine;
 
+import org.joml.Matrix3x2f;
 import org.lwjgl.BufferUtils;
 
 import java.io.*;
@@ -83,5 +84,26 @@ public class Utils {
 
         buffer.flip();
         return memSlice(buffer);
+    }
+
+
+
+    public static class Box {
+
+        public final float x, y, z;
+        public final float w, h, d;
+        public final float vx, vy, vz;
+
+        public Box(float x, float y, float z, float w, float h, float d, float vx, float vy, float vz) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.w = w;
+            this.h = h;
+            this.d = d;
+            this.vx = vx;
+            this.vy = vy;
+            this.vz = vz;
+        }
     }
 }

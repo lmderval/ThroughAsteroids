@@ -1,9 +1,11 @@
 package com.torpill.engine.graphics;
 
+import com.torpill.engine.Utils;
 import com.torpill.engine.Window;
 import com.torpill.engine.graphics.lights.DirectionalLight;
 import com.torpill.engine.graphics.lights.PointLight;
 import com.torpill.engine.graphics.lights.SpotLight;
+import com.torpill.engine.graphics.meshes.Material;
 import com.torpill.engine.graphics.meshes.Mesh;
 import com.torpill.engine.graphics.meshes.Texture;
 import com.torpill.engine.graphics.shaders.hud.HudShader;
@@ -16,10 +18,9 @@ import com.torpill.engine.world.blocks.Block;
 import com.torpill.engine.world.entities.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-import org.joml.Vector3i;
-import org.joml.Vector4f;
+import org.joml.*;
+
+import java.lang.Math;
 
 import static com.torpill.engine.graphics.meshes.Material.DEFAULT_COLOR;
 import static com.torpill.engine.graphics.shaders.main.MainShader.*;
@@ -121,6 +122,44 @@ public class Renderer {
         curr_mesh.postRender();
     }
 
+    private void renderBox(@NotNull Utils.Box box, @NotNull Matrix4f view_mat) {
+        Material box_mat = new Material();
+        transformation.setModelView(2f, view_mat, curr_mat);
+        main.setUniform(UNI_MODEL_VIEW, curr_mat);
+        main.setUniform(UNI_MATERIAL, box_mat);
+        main.setUniform(UNI_COLOR, new Vector4f(0f, 0f, 3f, 0f));
+        glBegin(GL_LINES);
+        {
+            glVertex3f(box.x, box.y, box.z);
+            glVertex3f(box.x, box.y + box.h, box.z);
+            glVertex3f(box.x + box.w, box.y, box.z);
+            glVertex3f(box.x + box.w, box.y + box.h, box.z);
+            glVertex3f(box.x + box.w, box.y, box.z + box.d);
+            glVertex3f(box.x + box.w, box.y + box.h, box.z + box.d);
+            glVertex3f(box.x, box.y, box.z + box.d);
+            glVertex3f(box.x, box.y + box.h, box.z + box.d);
+
+            glVertex3f(box.x, box.y, box.z);
+            glVertex3f(box.x + box.w, box.y, box.z);
+            glVertex3f(box.x, box.y + box.h, box.z);
+            glVertex3f(box.x + box.w, box.y + box.h, box.z);
+            glVertex3f(box.x, box.y + box.h, box.z + box.d);
+            glVertex3f(box.x + box.w, box.y + box.h, box.z + box.d);
+            glVertex3f(box.x, box.y, box.z + box.d);
+            glVertex3f(box.x + box.w, box.y, box.z + box.d);
+
+            glVertex3f(box.x, box.y, box.z);
+            glVertex3f(box.x, box.y, box.z + box.d);
+            glVertex3f(box.x + box.w, box.y, box.z);
+            glVertex3f(box.x + box.w, box.y, box.z + box.d);
+            glVertex3f(box.x + box.w, box.y + box.h, box.z);
+            glVertex3f(box.x + box.w, box.y + box.h, box.z + box.d);
+            glVertex3f(box.x, box.y + box.h, box.z);
+            glVertex3f(box.x, box.y + box.h, box.z + box.d);
+        }
+        glEnd();
+    }
+
     private void preRenderBlocks(@NotNull Mesh block_mesh) {
         block_mesh.preRender(false);
         curr_mesh = block_mesh;
@@ -144,7 +183,7 @@ public class Renderer {
         curr_light_map = null;
     }
 
-    public void renderChunk(@NotNull Chunk chunk, @NotNull World world, @NotNull Vector3i position, @NotNull Matrix4f view_mat) {
+    public void renderChunk(@NotNull Chunk chunk, @NotNull World world, @NotNull Vector3i position, @NotNull Matrix4f view_mat, boolean showHitbox) {
         Block block;
         Block[] neighbors = new Block[6];
         Vector3f block_position = new Vector3f();
@@ -184,6 +223,10 @@ public class Renderer {
                             }
                             block_position.set(i + position.x, j, k + position.z);
                             renderBlock(block_position, world.isSelected(x0, j, z0), view_mat);
+                            if (showHitbox) {
+                                // Hitbox
+                                renderBox(block.getBox(i + x, j, k + z), view_mat);
+                            }
                         }
                     }
                 }
@@ -192,7 +235,7 @@ public class Renderer {
         postRenderBlocks();
     }
 
-    public void renderWorld(@NotNull World world, @NotNull Camera camera) {
+    public void renderWorld(@NotNull World world, @NotNull Camera camera, boolean showHitbox) {
         Chunk chunk;
         Matrix4f view_mat = camera.getViewMat();
         int world_width = world.getWidth();
@@ -229,7 +272,7 @@ public class Renderer {
                     chunk = world.getChunkIfProvided(i, k);
                     if (chunk != null) {
                         position.set(i * chunk_width, 0, k * chunk_depth);
-                        renderChunk(chunk, world, position, view_mat);
+                        renderChunk(chunk, world, position, view_mat, showHitbox);
                     }
                 }
             }
@@ -242,6 +285,10 @@ public class Renderer {
             delta_z = camera_chunk_z - k;
             if (delta_x * delta_x + delta_z * delta_z < RENDER_DISTANCE_SQUARED) {
                 renderEntity(entity, view_mat);
+                if (showHitbox) {
+                    // Hitbox
+                    renderBox(entity.getBox(), view_mat);
+                }
             }
         }
     }

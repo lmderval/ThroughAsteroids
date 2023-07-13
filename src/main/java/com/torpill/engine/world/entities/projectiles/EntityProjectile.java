@@ -8,18 +8,18 @@ import org.joml.Matrix3x2f;
 
 public class EntityProjectile extends Entity {
 
+    private final float speed;
+
     public EntityProjectile(@NotNull Mesh mesh, float mass, @NotNull Matrix3x2f box, @NotNull Entity thrower, float speed) {
         super(mesh, mass, box);
-        double angle = Math.toRadians(thrower.getRotation().y);
-        rotation.set(0f, thrower.getRotation().y, 0f);
-        this.speed.set(Math.sin(angle) * speed, 0f, Math.cos(angle) * speed);
+        double angle = thrower.getRotation().y;
+        rotation.set(0f, angle, 0f);
+        this.speed = speed;
     }
 
     @Override
     public void update(@NotNull World world) {
-        position.add(speed);
-        speed.add(acc);
-        acc.set(0f, 0f, 0f);
+        forward(speed);
         if (collision(world)) {
             setAlive(false);
         }

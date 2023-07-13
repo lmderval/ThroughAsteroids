@@ -14,6 +14,6 @@ public abstract class HalfSlab extends Block {
     }
 
     public HalfSlab(Material material) {
-        super(BLOCK_MESH, material, new Vector3f(0f), new Vector3f(0.25f, 0.25f, 0.25f));
+        super(BLOCK_MESH, material, new Vector3f(0f, -0.375f, 0f), new Vector3f(1f, 0.25f, 1f));
     }
 }

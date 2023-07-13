@@ -5,6 +5,8 @@ import com.torpill.engine.world.blocks.Blocks;
 import com.torpill.engine.world.entities.Entity;
 import com.torpill.engine.world.entities.EntityPlayer;
 import com.torpill.engine.world.entities.PhysicsEntity;
+import com.torpill.engine.world.entities.Shooter;
+import com.torpill.engine.world.entities.projectiles.EntityProjectile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3i;
@@ -122,6 +124,13 @@ public class World {
 
     public void update() {
         Chunk chunk;
+        List<EntityProjectile> projectiles = new ArrayList<>();
+        for (Entity entity : entities) {
+            if (entity instanceof Shooter && ((Shooter) entity).canShoot()) {
+                projectiles.addAll(((Shooter) entity).shoot(this));
+            }
+        }
+        entities.addAll(projectiles);
         for (Entity entity : entities) {
             if (entity.isAlive()) {
                 entity.update(this);

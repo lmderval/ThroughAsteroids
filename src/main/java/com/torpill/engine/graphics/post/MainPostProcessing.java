@@ -52,8 +52,15 @@ public class MainPostProcessing {
 		pixelate.render(verticalBlur.getOutputTexture(), window.getWidth(), window.getHeight());
 		combineFilter.render(colourTexture, pixelate.getOutputTexture());
 		contrastChanger.render(combineFilter.getOutputTexture());
-
 		superposeFilter.render(contrastChanger.getOutputTexture(), hudColourTexture);
+
+//		brightFilter.render(colourTexture);
+//		horizontalBlur.render(brightFilter.getOutputTexture());
+//		verticalBlur.render(horizontalBlur.getOutputTexture());
+//		combineFilter.render(colourTexture, verticalBlur.getOutputTexture());
+//		contrastChanger.render(combineFilter.getOutputTexture());
+//		pixelate.render(contrastChanger.getOutputTexture(), window.getWidth(), window.getHeight());
+//		superposeFilter.render(pixelate.getOutputTexture(), hudColourTexture);
 		end();
 	}
 	

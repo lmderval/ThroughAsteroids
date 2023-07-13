@@ -23,6 +23,8 @@ import com.torpill.engine.loader.MeshCache;
 import com.torpill.engine.world.World;
 import com.torpill.engine.world.blocks.Block;
 import com.torpill.engine.world.blocks.Blocks;
+import com.torpill.engine.world.entities.EntityPlayer;
+import com.torpill.engine.world.entities.EntityTower;
 import com.torpill.engine.world.entities.projectiles.EntityProjectile;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Intersectionf;
@@ -78,6 +80,9 @@ public class ThroughAsteroids implements IGameLogic {
 
     private int currentBlock = 0;
 
+    private boolean showHitbox = false;
+    private int hitboxTick = 0;
+
     @Override
     public void init(@NotNull Window window) throws Exception {
         renderer.init();
@@ -121,6 +126,13 @@ public class ThroughAsteroids implements IGameLogic {
             direction.z += 1;
             playerDirection.z -= 1;
         }
+        if (keyboard_input.isPressed(GLFW_KEY_H) && hitboxTick == 0) {
+            showHitbox = !showHitbox;
+            hitboxTick = 1;
+        }
+        if (keyboard_input.isReleased(GLFW_KEY_H)) {
+            hitboxTick = 0;
+        }
     }
 
     @Override
@@ -151,7 +163,7 @@ public class ThroughAsteroids implements IGameLogic {
 
                 Vector3f pos = world.getPlayer().getPosition();
                 float dy = 10f;
-                camera.setPosition(pos.x, pos.y + dy, pos.z + dy / (float) Math.tan(Math.toRadians(camera.getRotation().x)));
+                camera.setPosition(pos.x + 7f, pos.y + dy, pos.z + dy / (float) Math.tan(Math.toRadians(camera.getRotation().x)));
 
                 if (world.isTerminated()) {
                     gameState = WIN;
@@ -286,7 +298,7 @@ public class ThroughAsteroids implements IGameLogic {
             fbo.bindFrameBuffer();
             window.setClearColor(15, 15, 19, 255);
             renderer.preRender(window, camera, perspective, ambient_light, point_light, spot_light, directional_light);
-            renderer.renderWorld(world, camera);
+            renderer.renderWorld(world, camera, showHitbox);
             renderer.postRender();
             fbo.unbindFrameBuffer();
             hudFbo.bindFrameBuffer();
@@ -534,16 +546,27 @@ public class ThroughAsteroids implements IGameLogic {
     }
 
     public void edit(boolean reload) {
-        if (reload) world.load("save/level1");
+        if (reload) {
+            world.load("save/level1");
+            world.removeAll(entity -> !(entity instanceof EntityPlayer));
+
+            EntityTower tower = new EntityTower();
+            tower.setPosition(23f, 1f, 8f);
+            world.addEntity(tower);
+
+            tower = new EntityTower();
+            tower.setPosition(18f, 1f, 14f);
+            world.addEntity(tower);
+        }
         world.removeAll(entity -> entity instanceof EntityProjectile);
         gameState = EDIT;
         perspective = true;
 
         world.getPlayer().setPosition(2f, 0.0f, 11f);
-        world.getPlayer().setRotation(0f, 90f, 0f);
+        world.getPlayer().setRotation(0f, 0f, 0f);
         camera.setPosition(world.getPlayer().getPosition());
         camera.move(-6f, 3f, 0f);
-        camera.setRotation(world.getPlayer().getRotation());
+        camera.setRotation(0f, 90f, 0f);
 
         camera.updateViewMat();
     }
@@ -557,7 +580,7 @@ public class ThroughAsteroids implements IGameLogic {
         world.getPlayer().setAlive(true);
         world.getPlayer().resetControl();
         world.getPlayer().setPosition(2f, 0.0f, 11f);
-        world.getPlayer().setRotation(0f, 90f, 0f);
+        world.getPlayer().setRotation(0f, 0f, 0f);
 
         camera.setRotation(70f, 0f, 0f);
         camera.updateViewMat();

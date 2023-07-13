@@ -12,6 +12,8 @@ void main(void){
 	out_color = vec4(brightness, brightness, brightness, 0);
 	if (brightness > 0.6) {
 		out_color.gb = vec2(0, 0);
+	} else if (color.r > 0.9) {
+		out_color.rgb = vec3(color.r * 0.7, 0, 0);
 	} else {
 		out_color.gb = out_color.gb - vec2(0.05, 0.05);
 	}

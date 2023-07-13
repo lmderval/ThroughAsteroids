@@ -35,7 +35,7 @@ public class DeathGui extends NuklearScene.Gui {
                 nk_window_set_position(ctx, name, vec2);
 
                 nk_layout_row_dynamic(ctx, 50, 1);
-                if (nk_button_label(ctx, "Retry")) {
+                if (nk_button_label(ctx, "Try Again")) {
                     Main.getInstance().play(false);
                 }
 
