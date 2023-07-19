@@ -24,6 +24,7 @@ import com.torpill.engine.world.blocks.Block;
 import com.torpill.engine.world.blocks.Blocks;
 import com.torpill.engine.world.entities.EntityPlayer;
 import com.torpill.engine.world.entities.EntityTower;
+import com.torpill.engine.world.entities.projectiles.EntityLaser;
 import com.torpill.engine.world.entities.projectiles.EntityProjectile;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Intersectionf;
@@ -547,17 +548,8 @@ public class ThroughAsteroids implements IGameLogic {
     public void edit(boolean reload) {
         if (reload) {
             world.load("save/level1");
-            world.removeAll(entity -> !(entity instanceof EntityPlayer));
-
-            EntityTower tower = new EntityTower();
-            tower.setPosition(23f, 1f, 8f);
-            world.addEntity(tower);
-
-            tower = new EntityTower();
-            tower.setPosition(18f, 1f, 14f);
-            world.addEntity(tower);
         }
-        world.removeAll(entity -> entity instanceof EntityProjectile);
+        world.removeAll(entity -> !(entity instanceof EntityPlayer));
         gameState = EDIT;
         perspective = true;
 
@@ -572,7 +564,8 @@ public class ThroughAsteroids implements IGameLogic {
 
     public void play(boolean reload) {
         if (reload) world.load("save/level1");
-        world.removeAll(entity -> entity instanceof EntityProjectile);
+        world.removeAll(entity -> !(entity instanceof EntityPlayer));
+        world.summonEntities();
         gameState = PLAY;
         perspective = false;
 

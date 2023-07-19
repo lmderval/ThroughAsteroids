@@ -25,6 +25,10 @@ public class Material {
         this(DEFAULT_COLOR, DEFAULT_COLOR, DEFAULT_COLOR, DEFAULT_COLOR, reflectance, 0f);
     }
 
+    public Material(float reflectance, float emissivity) {
+        this(DEFAULT_COLOR, DEFAULT_COLOR, DEFAULT_COLOR, DEFAULT_COLOR, reflectance, emissivity);
+    }
+
     public Material(Vector4f ambient, Vector4f diffuse, Vector4f specular, Vector4f emissive, float reflectance, float emissivity) {
         this.ambient = ambient;
         this.diffuse = diffuse;

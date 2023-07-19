@@ -19,7 +19,7 @@ public class EntityTower extends Entity implements Shooter {
     private float theta;
 
     public EntityTower() {
-        super(TOWER, 10000f, new Matrix3x2f(0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f));
+        super(TOWER, 10000f, new Matrix3x2f(0.5f, 0.5f, 0.5f, 0.4f, 0.5f, 0.5f));
     }
 
     @Override
@@ -47,10 +47,8 @@ public class EntityTower extends Entity implements Shooter {
     }
 
     public Collection<EntityProjectile> shoot(@NotNull World world) {
-        EntityProjectile laser = new EntityLaser(this);
-        laser.setPosition(position);
+        EntityProjectile laser = new EntityLaser(this, 1f, 0f, 0f);
         laser.forward(0.75f);
-        laser.setScale(0.2f);
         laser.setColor(10f, 0f, 0f, 1f);
         if (--cooldown == -3) {
             cooldown = 15;

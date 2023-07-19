@@ -13,6 +13,7 @@ public class EntityProjectile extends Entity {
     public EntityProjectile(@NotNull Mesh mesh, float mass, @NotNull Matrix3x2f box, @NotNull Entity thrower, float speed) {
         super(mesh, mass, box);
         double angle = thrower.getRotation().y;
+        position.set(thrower.getPosition());
         rotation.set(0f, angle, 0f);
         this.speed = speed;
     }

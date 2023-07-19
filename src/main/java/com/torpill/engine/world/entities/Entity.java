@@ -17,24 +17,23 @@ public abstract class Entity {
     protected final Vector3f speed = new Vector3f();
     protected final Vector3f position = new Vector3f();
     protected final Vector3f rotation = new Vector3f();
-    protected final Matrix3x2f box = new Matrix3x2f(0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f);
+    protected final Matrix3x2f box;
     private final Mesh mesh;
     private final Transformation transformation = new Transformation();
     private final Vector4f color = new Vector4f(1f);
     private final Matrix4f mv_mat = new Matrix4f();
-    private final Matrix4f mv_mat_pos = new Matrix4f();
     protected boolean alive;
     protected float scale = 1f;
 
     public Entity(@NotNull Mesh mesh, float mass) {
-        alive = true;
-        this.mesh = mesh;
-        this.mass = mass;
+        this(mesh, mass, new Matrix3x2f(0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f));
     }
 
     public Entity(@NotNull Mesh mesh, float mass, @NotNull Matrix3x2f box) {
-        this(mesh, mass);
-        this.box.set(box);
+        this.box = box;
+        alive = true;
+        this.mesh = mesh;
+        this.mass = mass;
     }
 
     public abstract void update(@NotNull World world);
@@ -269,26 +268,26 @@ public abstract class Entity {
         transformation.setModelView(position, scale, rotation, view_mat, mv_mat);
     }
 
-    public void recalculatePositionOnly(@NotNull Matrix4f view_mat) {
-        transformation.setModelView(position, 1f, new Vector3f(0f), view_mat, mv_mat_pos);
-    }
-
     public Matrix4f getModelViewMat() {
         return mv_mat;
     }
 
-    public Matrix4f getModelViewMatPositionOnly() {
-        return mv_mat_pos;
-    }
-
-    public Matrix3x2f getBoxMatrix3x2f() {
-        return box;
-    }
-
     public Utils.Box getBox() {
+        float m00, m01, m20, m21;
+        Matrix2f bxz1 = new Matrix2f(-box.m00, -box.m20, -box.m00, box.m21);
+        Matrix2f bxz2 = new Matrix2f(box.m01, box.m21, box.m01, -box.m20);
+        float cos = (float) Math.cos(Math.toRadians(rotation.y));
+        float sin = (float) Math.sin(Math.toRadians(rotation.y));
+        Matrix2f rot = new Matrix2f(cos, -sin, sin, cos);
+        Matrix2f cxz1 = new Matrix2f(rot).mul(bxz1);
+        Matrix2f cxz2 = new Matrix2f(rot).mul(bxz2);
+        m00 = -Math.min(Math.min(cxz1.m00, cxz1.m10), Math.min(cxz2.m00, cxz2.m10));
+        m01 = Math.max(Math.max(cxz1.m00, cxz1.m10), Math.max(cxz2.m00, cxz2.m10));
+        m20 = -Math.min(Math.min(cxz1.m01, cxz1.m11), Math.min(cxz2.m01, cxz2.m11));
+        m21 = Math.max(Math.max(cxz1.m01, cxz1.m11), Math.max(cxz2.m01, cxz2.m11));
         return new Utils.Box(
-                -box.m00 + position.x, -box.m10 + position.y, -box.m20 + position.z,
-                box.m00 + box.m01, box.m10 + box.m11, box.m20 + box.m21,
+                -m00 + position.x, -box.m10 + position.y, -m20 + position.z,
+                m00 + m01, box.m10 + box.m11, m20 + m21,
                 speed.x, speed.y, speed.z
         );
     }

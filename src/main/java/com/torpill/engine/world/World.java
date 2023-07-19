@@ -249,4 +249,15 @@ public class World {
     public boolean isTerminated() {
         return terminated;
     }
+
+    public void summonEntities() {
+        Chunk chunk;
+        for (int chunkX = 0; chunkX < width; chunkX++) {
+            for (int chunkZ = 0; chunkZ < depth; chunkZ++) {
+                if ((chunk = getChunkIfProvided(chunkX, chunkZ)) != null) {
+                    chunk.summonEntities(this, chunkX, chunkZ);
+                }
+            }
+        }
+    }
 }

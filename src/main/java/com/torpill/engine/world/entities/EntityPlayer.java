@@ -53,17 +53,11 @@ public class EntityPlayer extends Entity {
     }
 
     public void throwLaser(@NotNull World world) {
-        Entity laser = new EntityLaser(this);
-        laser.setPosition(position);
+        Entity laser = new EntityLaser(this, 0f, 1f, 1f);
         laser.drift(scale * 0.4f);
-        laser.setScale(0.2f);
-        laser.setColor(0f, 10f, 10f, 1f);
         world.addEntity(laser);
-        laser = new EntityLaser(this);
-        laser.setPosition(position);
+        laser = new EntityLaser(this, 0f, 1f, 1f);
         laser.drift(-scale * 0.4f);
-        laser.setScale(0.2f);
-        laser.setColor(0f, 10f, 10f, 1f);
         world.addEntity(laser);
     }
 }

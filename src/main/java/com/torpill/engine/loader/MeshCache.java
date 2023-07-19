@@ -27,7 +27,9 @@ public class MeshCache {
         TOWER.getMaterial().setTexture(TextureCache.getInstance().getTexture("textures/entities/tower.png"));
         TOWER.getMaterial().setLightMap(TextureCache.getInstance().getTexture("textures/lights/entities/tower.png"));
 
-        LASER = MeshCache.getInstance().getStaticMeshes("models/entities/laser.obj", "textures/entities")[0];
+        LASER = MeshCache.getInstance().getStaticMeshes("models/entities/laser.obj", null)[0];
+        Material laserMat = new Material(0f, 0.4f);
+        LASER.setMaterial(laserMat);
 
         HUD_CROSS = MeshCache.getInstance().getStaticMeshes("models/hud/cross.obj", null)[0];
         Material crossMat = new Material(0f);

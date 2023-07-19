@@ -2,6 +2,7 @@ package com.torpill.engine.world.blocks;
 
 import com.torpill.engine.graphics.meshes.Material;
 import com.torpill.engine.loader.TextureCache;
+import com.torpill.engine.world.blocks.spawner.TowerSpawner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ public class Blocks {
     public static Block WALL_EDGE;
     public static Block WALL_ORE;
     public static Block END_MARK;
+    public static Block TOWER_SPAWNER;
 
     public static List<Block> blocks;
     public static Map<Block, Integer> map;
@@ -50,12 +52,18 @@ public class Blocks {
         endMarkMat.setLightMap(TextureCache.getInstance().getTexture("textures/lights/blocks/end_mark.png"));
         END_MARK = new EndMarkBlock(endMarkMat);
 
+        Material towerSpawnerMat = new Material(0.0f);
+        towerSpawnerMat.setTexture(TextureCache.getInstance().getTexture("textures/blocks/tower_spawner.png"));
+        towerSpawnerMat.setLightMap(TextureCache.getInstance().getTexture("textures/lights/blocks/tower_spawner.png"));
+        TOWER_SPAWNER = new TowerSpawner(towerSpawnerMat);
+
         blocks.add(WALL);
         blocks.add(WALL_BRICK);
         blocks.add(WALL_DUST);
         blocks.add(WALL_EDGE);
         blocks.add(WALL_ORE);
         blocks.add(END_MARK);
+        blocks.add(TOWER_SPAWNER);
 
         genMap();
     }
