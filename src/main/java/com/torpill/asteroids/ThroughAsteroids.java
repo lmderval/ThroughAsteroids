@@ -418,124 +418,124 @@ public class ThroughAsteroids implements IGameLogic {
     }
 
     private void loadWorld() {
-//        world = new World(64, 16, 64, 16, 16);
-//        for (int i = 0; i < 32; i++) {
-//            for (int j = 0; j < 18; j++) {
-//                world.setBlock(i, 0, j, Blocks.WALL);
-//            }
-//        }
-//
-//        for (int i = 0; i < 18; i++) {
-//            for (int j = 9; j < 14; j++) {
-//                world.setBlock(i, 0, j, null);
-//            }
-//        }
-//
-//        for (int i = 18; i < 23; i++) {
-//            for (int j = 9; j < 13; j++) {
-//                world.setBlock(i, 0, j, null);
-//            }
-//        }
-//
-//        for (int i = 23; i < 32; i++) {
-//            for (int j = 10; j < 13; j++) {
-//                world.setBlock(i, 0, j, null);
-//            }
-//        }
-//
-//        world.setBlock(24, 0, 1, Blocks.WALL_BRICK);
-//        for (int i = 25; i < 28; i++) {
-//            for (int j = 0; j < 2; j++) {
-//                world.setBlock(i, 0, j, Blocks.WALL_BRICK);
-//            }
-//        }
-//        world.setBlock(28, 0, 0, Blocks.WALL_BRICK);
-//
-//        for (int i = 12; i < 16; i++) {
-//            for (int j = 5; j < 7; j++) {
-//                world.setBlock(i, 0, j, Blocks.WALL_BRICK);
-//            }
-//        }
-//
-//        for (int i = 0; i < 2; i++) {
-//            for (int j = 15; j < 18; j++) {
-//                world.setBlock(i, 0, j, Blocks.WALL_BRICK);
-//            }
-//        }
-//        world.setBlock(2, 0, 17, Blocks.WALL_BRICK);
-//
-//        for (int i = 18; i < 22; i++) {
-//            for (int j = 16; j < 18; j++) {
-//                world.setBlock(i, 0, j, Blocks.WALL_BRICK);
-//            }
-//        }
-//
-//        world.setBlock(31, 0, 7, Blocks.WALL_BRICK);
-//        world.setBlock(31, 0, 8, Blocks.WALL_BRICK);
-//
-//        for (int i = 3; i < 6; i++) {
-//            world.setBlock(i, 0, 1, Blocks.WALL_ORE);
-//        }
-//        world.setBlock(4, 0, 2, Blocks.WALL_ORE);
-//
-//        for (int i = 4; i < 7; i++) {
-//            world.setBlock(20, 0, i, Blocks.WALL_ORE);
-//        }
-//        world.setBlock(21, 0, 5, Blocks.WALL_ORE);
-//
-//        for (int i = 27; i < 30; i++) {
-//            world.setBlock(i, 0, 16, Blocks.WALL_ORE);
-//        }
-//        world.setBlock(28, 0, 15, Blocks.WALL_ORE);
-//
-//        world.setBlock(1, 0, 8, Blocks.WALL_DUST);
-//        world.setBlock(2, 0, 8, Blocks.WALL_DUST);
-//        world.setBlock(4, 0, 8, Blocks.WALL_EDGE);
-//        world.setBlock(5, 0, 8, Blocks.WALL_DUST);
-//        world.setBlock(6, 0, 8, Blocks.WALL_EDGE);
-//        world.setBlock(7, 0, 8, Blocks.WALL_EDGE);
-//        world.setBlock(8, 0, 8, Blocks.WALL_EDGE);
-//        world.setBlock(11, 0, 8, Blocks.WALL_EDGE);
-//        world.setBlock(13, 0, 8, Blocks.WALL_EDGE);
-//        world.setBlock(14, 0, 8, Blocks.WALL_EDGE);
-//        world.setBlock(16, 0, 8, Blocks.WALL_DUST);
-//        world.setBlock(18, 0, 8, Blocks.WALL_EDGE);
-//        world.setBlock(19, 0, 8, Blocks.WALL_EDGE);
-//        world.setBlock(21, 0, 8, Blocks.WALL_EDGE);
-//        world.setBlock(22, 0, 8, Blocks.WALL_DUST);
-//        world.setBlock(23, 0, 8, Blocks.WALL_DUST);
-//        world.setBlock(23, 0, 9, Blocks.WALL_EDGE);
-//        world.setBlock(24, 0, 9, Blocks.WALL_EDGE);
-//        world.setBlock(26, 0, 9, Blocks.WALL_DUST);
-//        world.setBlock(27, 0, 9, Blocks.WALL_EDGE);
-//        world.setBlock(28, 0, 9, Blocks.WALL_EDGE);
-//        world.setBlock(29, 0, 9, Blocks.WALL_DUST);
-//
-//        world.setBlock(0, 0, 14, Blocks.WALL_EDGE);
-//        world.setBlock(2, 0, 14, Blocks.WALL_DUST);
-//        world.setBlock(3, 0, 14, Blocks.WALL_EDGE);
-//        world.setBlock(4, 0, 14, Blocks.WALL_EDGE);
-//        world.setBlock(5, 0, 14, Blocks.WALL_EDGE);
-//        world.setBlock(8, 0, 14, Blocks.WALL_EDGE);
-//        world.setBlock(9, 0, 14, Blocks.WALL_DUST);
-//        world.setBlock(10, 0, 14, Blocks.WALL_EDGE);
-//        world.setBlock(11, 0, 14, Blocks.WALL_EDGE);
-//        world.setBlock(13, 0, 14, Blocks.WALL_EDGE);
-//        world.setBlock(15, 0, 14, Blocks.WALL_DUST);
-//        world.setBlock(16, 0, 14, Blocks.WALL_DUST);
-//        world.setBlock(17, 0, 14, Blocks.WALL_EDGE);
-//        world.setBlock(18, 0, 14, Blocks.WALL_EDGE);
-//        world.setBlock(18, 0, 13, Blocks.WALL_EDGE);
-//        world.setBlock(19, 0, 13, Blocks.WALL_EDGE);
-//        world.setBlock(22, 0, 13, Blocks.WALL_EDGE);
-//        world.setBlock(23, 0, 14, Blocks.WALL_DUST);
-//        world.setBlock(25, 0, 13, Blocks.WALL_EDGE);
-//        world.setBlock(26, 0, 13, Blocks.WALL_EDGE);
-//        world.setBlock(27, 0, 13, Blocks.WALL_EDGE);
-//        world.setBlock(28, 0, 13, Blocks.WALL_EDGE);
-//        world.setBlock(29, 0, 14, Blocks.WALL_DUST);
-//        world.setBlock(30, 0, 14, Blocks.WALL_DUST);
-//        world.setBlock(31, 0, 13, Blocks.WALL_EDGE);
+        world = new World(64, 16, 64, 16, 16);
+        for (int i = 0; i < 32; i++) {
+            for (int j = 0; j < 18; j++) {
+                world.setBlock(i, 0, j, Blocks.WALL);
+            }
+        }
+
+        for (int i = 0; i < 18; i++) {
+            for (int j = 9; j < 14; j++) {
+                world.setBlock(i, 0, j, null);
+            }
+        }
+
+        for (int i = 18; i < 23; i++) {
+            for (int j = 9; j < 13; j++) {
+                world.setBlock(i, 0, j, null);
+            }
+        }
+
+        for (int i = 23; i < 32; i++) {
+            for (int j = 10; j < 13; j++) {
+                world.setBlock(i, 0, j, null);
+            }
+        }
+
+        world.setBlock(24, 0, 1, Blocks.WALL_BRICK);
+        for (int i = 25; i < 28; i++) {
+            for (int j = 0; j < 2; j++) {
+                world.setBlock(i, 0, j, Blocks.WALL_BRICK);
+            }
+        }
+        world.setBlock(28, 0, 0, Blocks.WALL_BRICK);
+
+        for (int i = 12; i < 16; i++) {
+            for (int j = 5; j < 7; j++) {
+                world.setBlock(i, 0, j, Blocks.WALL_BRICK);
+            }
+        }
+
+        for (int i = 0; i < 2; i++) {
+            for (int j = 15; j < 18; j++) {
+                world.setBlock(i, 0, j, Blocks.WALL_BRICK);
+            }
+        }
+        world.setBlock(2, 0, 17, Blocks.WALL_BRICK);
+
+        for (int i = 18; i < 22; i++) {
+            for (int j = 16; j < 18; j++) {
+                world.setBlock(i, 0, j, Blocks.WALL_BRICK);
+            }
+        }
+
+        world.setBlock(31, 0, 7, Blocks.WALL_BRICK);
+        world.setBlock(31, 0, 8, Blocks.WALL_BRICK);
+
+        for (int i = 3; i < 6; i++) {
+            world.setBlock(i, 0, 1, Blocks.WALL_ORE);
+        }
+        world.setBlock(4, 0, 2, Blocks.WALL_ORE);
+
+        for (int i = 4; i < 7; i++) {
+            world.setBlock(20, 0, i, Blocks.WALL_ORE);
+        }
+        world.setBlock(21, 0, 5, Blocks.WALL_ORE);
+
+        for (int i = 27; i < 30; i++) {
+            world.setBlock(i, 0, 16, Blocks.WALL_ORE);
+        }
+        world.setBlock(28, 0, 15, Blocks.WALL_ORE);
+
+        world.setBlock(1, 0, 8, Blocks.WALL_DUST);
+        world.setBlock(2, 0, 8, Blocks.WALL_DUST);
+        world.setBlock(4, 0, 8, Blocks.WALL_EDGE);
+        world.setBlock(5, 0, 8, Blocks.WALL_DUST);
+        world.setBlock(6, 0, 8, Blocks.WALL_EDGE);
+        world.setBlock(7, 0, 8, Blocks.WALL_EDGE);
+        world.setBlock(8, 0, 8, Blocks.WALL_EDGE);
+        world.setBlock(11, 0, 8, Blocks.WALL_EDGE);
+        world.setBlock(13, 0, 8, Blocks.WALL_EDGE);
+        world.setBlock(14, 0, 8, Blocks.WALL_EDGE);
+        world.setBlock(16, 0, 8, Blocks.WALL_DUST);
+        world.setBlock(18, 0, 8, Blocks.WALL_EDGE);
+        world.setBlock(19, 0, 8, Blocks.WALL_EDGE);
+        world.setBlock(21, 0, 8, Blocks.WALL_EDGE);
+        world.setBlock(22, 0, 8, Blocks.WALL_DUST);
+        world.setBlock(23, 0, 8, Blocks.WALL_DUST);
+        world.setBlock(23, 0, 9, Blocks.WALL_EDGE);
+        world.setBlock(24, 0, 9, Blocks.WALL_EDGE);
+        world.setBlock(26, 0, 9, Blocks.WALL_DUST);
+        world.setBlock(27, 0, 9, Blocks.WALL_EDGE);
+        world.setBlock(28, 0, 9, Blocks.WALL_EDGE);
+        world.setBlock(29, 0, 9, Blocks.WALL_DUST);
+
+        world.setBlock(0, 0, 14, Blocks.WALL_EDGE);
+        world.setBlock(2, 0, 14, Blocks.WALL_DUST);
+        world.setBlock(3, 0, 14, Blocks.WALL_EDGE);
+        world.setBlock(4, 0, 14, Blocks.WALL_EDGE);
+        world.setBlock(5, 0, 14, Blocks.WALL_EDGE);
+        world.setBlock(8, 0, 14, Blocks.WALL_EDGE);
+        world.setBlock(9, 0, 14, Blocks.WALL_DUST);
+        world.setBlock(10, 0, 14, Blocks.WALL_EDGE);
+        world.setBlock(11, 0, 14, Blocks.WALL_EDGE);
+        world.setBlock(13, 0, 14, Blocks.WALL_EDGE);
+        world.setBlock(15, 0, 14, Blocks.WALL_DUST);
+        world.setBlock(16, 0, 14, Blocks.WALL_DUST);
+        world.setBlock(17, 0, 14, Blocks.WALL_EDGE);
+        world.setBlock(18, 0, 14, Blocks.WALL_EDGE);
+        world.setBlock(18, 0, 13, Blocks.WALL_EDGE);
+        world.setBlock(19, 0, 13, Blocks.WALL_EDGE);
+        world.setBlock(22, 0, 13, Blocks.WALL_EDGE);
+        world.setBlock(23, 0, 14, Blocks.WALL_DUST);
+        world.setBlock(25, 0, 13, Blocks.WALL_EDGE);
+        world.setBlock(26, 0, 13, Blocks.WALL_EDGE);
+        world.setBlock(27, 0, 13, Blocks.WALL_EDGE);
+        world.setBlock(28, 0, 13, Blocks.WALL_EDGE);
+        world.setBlock(29, 0, 14, Blocks.WALL_DUST);
+        world.setBlock(30, 0, 14, Blocks.WALL_DUST);
+        world.setBlock(31, 0, 13, Blocks.WALL_EDGE);
 
         world.getPlayer().setPosition(2f, -0.3f, 11f);
         world.getPlayer().setRotation(0f, 90f, 0f);
@@ -548,6 +548,7 @@ public class ThroughAsteroids implements IGameLogic {
     public void edit(boolean reload) {
         if (reload) {
             world.load("save/level1");
+            // loadWorld();
         }
         world.removeAll(entity -> !(entity instanceof EntityPlayer));
         gameState = EDIT;
